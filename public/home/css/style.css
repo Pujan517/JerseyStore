@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+:root {
+  --primary-color: #6366f1;
+  --primary-color-rgb: 99, 102, 241;
+  --secondary-color: #3b82f6;
+  --secondary-color-rgb: 59, 130, 246;
+  --text-color: #1e293b;
+  --light-gray: #e5e7eb;
+}
+
 
 
 #logincss{
@@ -397,23 +406,34 @@ a:focus {
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
+    min-height: 480px; /* Ensures all product boxes have the same minimum height */
+    max-height: 480px; /* Optional: makes all boxes exactly the same height */
+    height: 480px;     /* Optional: makes all boxes exactly the same height */
 }
 
 .product_section .img-box {
-    padding: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 250px;
-    background: #f8f9fa;
+  height: 215px;
+  min-height: 215px;
+  max-height: 215px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product_section .img-box img {
+  max-width: 100%;
+  max-height: 160px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
 }
 
 .product_section .detail-box {
-    padding: 20px;
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 140px; /* Ensures detail section is consistent */
 }
 
 .product_section .detail-box h5 {
@@ -446,11 +466,13 @@ a:focus {
 }
 
 .product_section .original-price {
-    font-size: 1rem;
-    color: #999;
+    font-size: 0.95rem; /* smaller font */
+    color: #f7444e;     /* red color */
     text-decoration: line-through;
     margin: 0;
     order: 1;
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
 .product_section .discounted-price {
@@ -578,6 +600,9 @@ a:focus {
     overflow: hidden;
     box-shadow: 5px 5px 5px -5px rgba(0,0,0,.2);
     border: solid #fff 10px;
+    min-height: 480px; /* Ensures all product boxes have the same minimum height */
+    max-height: 480px; /* Optional: makes all boxes exactly the same height */
+    height: 480px;     /* Optional: makes all boxes exactly the same height */
 }
 
 .product_section .box .img-box {
@@ -608,6 +633,7 @@ a:focus {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  min-height: 140px; /* Ensures detail section is consistent */
 }
 
 .product_section .box .detail-box h5 {

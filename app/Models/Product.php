@@ -13,6 +13,11 @@ class Product extends Model
         'discount_price',
         'quantity',
         'catagory',
-        'image'
+        'image',
+        'featured',
     ];
+public function category()
+    {
+        return $this->belongsTo(\App\Models\Catagory::class, 'catagory', 'catagory_name');
+    }
 }

@@ -1,0 +1,41 @@
+.btn1 {
+    border-radius: 8px;  /* Changed to more rectangular shape */
+    padding: 15px 40px;
+    background-color: #f7444e;
+    color: #ffffff;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: 600;
+    border: 2px solid #f7444e;
+    transition: all 0.3s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.btn1 .btn-text {
+    position: relative;
+    z-index: 1;
+}
+
+.btn1 .fa {
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+
+.btn1:hover {
+    background-color: transparent;
+    color: #f7444e;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(247, 68, 78, 0.4);
+    text-decoration: none;
+}
+
+.btn1:hover .fa {
+    transform: translateX(5px);
+}
+
+.btn-box {
+    margin-top: 30px;
+}

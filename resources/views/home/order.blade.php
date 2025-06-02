@@ -15,80 +15,137 @@
       <!-- bootstrap core css -->
       <link rel="stylesheet" type="text/css" href="home/css/bootstrap.css" />
       <!-- font awesome style -->
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
       <link href="home/css/font-awesome.min.css" rel="stylesheet" />
       <!-- Custom styles for this template -->
       <link href="home/css/style.css" rel="stylesheet" />      <!-- responsive style -->
       <link href="home/css/responsive.css" rel="stylesheet" />      <style type="text/css">
-          .center {
-              margin: auto;
-              width: 90%;
-              max-width: 1200px;
-              padding: 30px;
-              text-align: center;
-          }
-          .order-table {
-              width: 100%;
-              border-collapse: collapse;
-              background-color: #fff;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-              margin-top: 20px;
-          }
-          .order-table th {
-              background-color: #f8f9fa;
-              color: #333;
-              font-weight: bold;
-              padding: 15px;
-              border: 1px solid #dee2e6;
-              text-transform: uppercase;
-              font-size: 14px;
-          }
-          .order-table td {
-              padding: 15px;
-              border: 1px solid #dee2e6;
-              vertical-align: middle;
-          }
-          .order-table img {
-              border-radius: 8px;
-              object-fit: cover;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          }
-          .section-title {
-              text-align: center;
-              margin-bottom: 30px;
-              color: #333;
-              font-size: 28px;
-              font-weight: bold;
-          }
-          .status-badge {
-              padding: 6px 12px;
-              border-radius: 20px;
-              font-size: 14px;
-              font-weight: 500;
-          }
-          .status-delivered {
-              background-color: #d4edda;
-              color: #155724;
-          }          .status-processing {
-              background-color: #fff3cd;
-              color: #856404;
-          }
-          .btn-cancel {
-              padding: 6px 12px;
-              border-radius: 20px;
-              font-size: 14px;
-              font-weight: 500;
-              background-color: #f8d7da;
-              color:rgb(255, 0, 25);
-              border: none;
-              cursor: pointer;
-              text-decoration: none;
-              transition: all 0.3s ease;
-          }
-          .btn-cancel:hover {
-              background-color: #f5c6cb;
-              color: #721c24;
-              text-decoration: none;
-          }
+        :root {
+            --primary-color: #2f80ed;
+            --secondary-color: #56ccf2;
+            --success-color: #27ae60;
+            --warning-color: #fbc02d;
+            --danger-color: #ff4444;
+            --text-color: #222;
+            --light-gray: #e0e0e0;
+        }
+        .order-container {
+            margin: 0;
+            max-width: none;
+            background: none;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+        }
+        .order-table {
+            width: 100%;
+            max-width: 1350px;
+            margin: 48px auto 40px auto;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #f7f8f9;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px 0 rgba(47,128,237,0.09);
+            padding: 0 24px 24px 24px;
+        }
+        @media (max-width: 1400px) {
+            .order-table {
+                max-width: 98vw;
+                padding: 0 2vw 24px 2vw;
+            }
+        }
+        .order-table th, .order-table td {
+            padding: 18px 12px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .order-table th {
+            font-size: 1.08rem;
+            background: linear-gradient(45deg, #2f80ed, #56ccf2);
+            color: #fff;
+            text-transform: uppercase;
+            border: none;
+        }
+        .order-table td {
+            background: #fff;
+            border-top: 1px solid #e0e0e0;
+            font-size: 1rem;
+        }
+        .order-table tr:last-child td {
+            border-bottom: none;
+        }
+        .order-table img {
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 1.5px 6px 0 rgba(47,128,237,0.07);
+            height: 70px;
+            width: 120px;
+        }
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2f80ed;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+        }
+        .status-badge {
+            padding: 7px 16px;
+            border-radius: 22px;
+            font-size: 0.98rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            display: inline-block;
+        }
+        .status-delivered {
+            background: linear-gradient(45deg, #27ae60, #6ee7b7);
+            color: #fff;
+        }
+        .status-processing {
+            background: linear-gradient(45deg, #fbc02d, #fffde4);
+            color: #856404;
+        }
+        .status-paid {
+            background: linear-gradient(45deg, #2f80ed, #56ccf2);
+            color: #fff;
+        }
+        .status-unpaid {
+            background: #f8d7da;
+            color: #c0392b;
+        }
+        .btn-cancel {
+            padding: 8px 20px;
+            border-radius: 22px;
+            font-size: 1rem;
+            font-weight: 600;
+            background: linear-gradient(45deg, #ff4444, #ff8888);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s, color 0.3s, transform 0.2s;
+            box-shadow: 0 1.5px 6px 0 rgba(255,68,68,0.07);
+        }
+        .btn-cancel:hover {
+            background: linear-gradient(45deg, #cc0000, #ff4444);
+            color: #fff;
+            transform: scale(1.06);
+            text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            .order-container {
+                padding: 10px 2px 20px 2px;
+            }
+            .order-table th, .order-table td {
+                padding: 8px 4px;
+                font-size: 0.95rem;
+            }
+            .order-table img {
+                height: 40px;
+                width: 60px;
+            }
+        }
       </style>
    </head>
    <body>      <div class="hero_area">
@@ -101,6 +158,7 @@
                     {{session()->get('message')}}
                 </div>
                 @endif
+                <br><br>
                 <h2 class="section-title">My Orders</h2>
                 <table class="order-table">
                      <thead>
@@ -130,7 +188,7 @@
                                 </span>
                             </td>
                             <td>
-                                <img height="100" width="180" src="product/{{$order->image}}" alt="{{$order->product_title}}">
+                                <img height="100" width="180" src="{{ asset('product/'.$order->image) }}" alt="{{$order->product_title}}">
                             </td>                            <td>
                                 @if($order->delivery_status != 'delivered')
                                     <a onclick="return confirm('Are you sure to cancel this order ?')" 

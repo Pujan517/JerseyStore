@@ -11,10 +11,11 @@
       <meta name="description" content="" />
       <meta name="author" content="" />
       <link rel="shortcut icon" href="images/favicon.png" type="">
-      <title>Famms - Fashion HTML Template</title>
+      <title>Bhakundo - Fashion HTML Template</title>
       <!-- bootstrap core css -->
       <link rel="stylesheet" type="text/css" href="home/css/bootstrap.css" />
       <!-- font awesome style -->
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
       <link href="home/css/font-awesome.min.css" rel="stylesheet" />
       <!-- Custom styles for this template -->
       <link href="home/css/style.css" rel="stylesheet" />
@@ -25,64 +26,187 @@
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
       
       <style type="text/css">
-            .center{
-                margin: auto;
-                width: 90%;
-                padding: 30px;
-                text-align: center;
+        :root {
+            --primary-color: #2f80ed;
+            --secondary-color: #56ccf2;
+            --danger-color: #ff4444;
+            --text-color: #222;
+            --light-gray: #e0e0e0;
+        }
+        .cart-table {
+            width: 100%;
+            max-width: 1350px;
+            margin: 48px auto 0 auto;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #f7f8f9;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px 0 rgba(47,128,237,0.09);
+            padding: 0 24px 0 24px;
+        }
+        .cart-table th, .cart-table td {
+            padding: 18px 12px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .cart-table th {
+            font-size: 1.08rem;
+            background: linear-gradient(45deg, #2f80ed, #56ccf2);
+            color: #fff;
+            text-transform: uppercase;
+            border: none;
+        }
+        .cart-table td {
+            background: #fff;
+            border-top: 1px solid #e0e0e0;
+            font-size: 1rem;
+        }
+        .cart-table tr:last-child td {
+            border-bottom: none;
+        }
+        .img_deg {
+            height: 90px;
+            width: 90px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 1.5px 6px 0 rgba(47,128,237,0.07);
+        }
+        .total_deg {
+            font-size: 1.5rem;
+            padding: 18px 0 10px 0;
+            color: #2f80ed;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+        .btn-remove {
+            background: linear-gradient(45deg, #ff4444, #ff8888);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 22px;
+            text-decoration: none;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 1.5px 6px 0 rgba(255,68,68,0.07);
+            transition: background 0.3s, transform 0.2s;
+            outline: none;
+            cursor: pointer;
+        }
+        .btn-remove:hover {
+            background: linear-gradient(45deg, #cc0000, #ff4444);
+            color: #fff;
+            transform: scale(1.06);
+        }
+        .cart-actions {
+            margin-top: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            justify-content: center;
+        }
+        .cart-actions .btn {
+            min-width: 180px;
+            font-size: 1.08rem;
+            font-weight: 600;
+            border-radius: 22px;
+            padding: 12px 0;
+            box-shadow: 0 1.5px 6px 0 rgba(47,128,237,0.07);
+            border: none;
+            transition: background 0.3s, color 0.3s, transform 0.2s;
+        }
+        .cart-actions .btn-danger {
+            background: linear-gradient(45deg, #2f80ed, #56ccf2);
+            color: #fff;
+        }
+        .cart-actions .btn-danger:hover {
+            background: linear-gradient(45deg, #56ccf2, #2f80ed);
+            color: #fff;
+            transform: scale(1.04);
+        }
+        @media (max-width: 600px) {
+            .cart-table th, .cart-table td {
+                padding: 8px 4px;
+                font-size: 0.95rem;
             }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 30px;
-            }
-
-            table, th, td {
-                border: 1px solid #ddd;
-            }
-
-            th, td {
-                padding: 15px;
-                text-align: center;
-                vertical-align: middle;
-            }
-
-            .th_deg {
-                font-size: 18px;
-                background: #2196F3;
-                color: white;
-                text-transform: uppercase;
-            }
-
             .img_deg {
-                height: 150px;
-                width: 150px;
-                object-fit: cover;
-                border-radius: 5px;
+                height: 60px;
+                width: 60px;
             }
-
-            .total_deg {
-                font-size: 24px;
-                padding: 20px;
-                color: #2196F3;
-                font-weight: bold;
+            .cart-actions .btn {
+                min-width: 120px;
+                padding: 8px 0;
+                font-size: 0.95rem;
             }
-
-            .btn-remove {
-                background-color: #ff4444;
-                color: white;
-                padding: 8px 15px;
-                border-radius: 5px;
-                text-decoration: none;
-                transition: background-color 0.3s;
+        }
+      </style>
+      <style>
+        .cart-summary {
+            max-width: 600px;
+            margin: 4px auto 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px 0 rgba(47,128,237,0.08);
+            padding: 32px 24px 28px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+        .cart-total {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2f80ed;
+            margin-bottom: 10px;
+        }
+        .total-label {
+            color: #222;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-right: 8px;
+        }
+        .total-value {
+            color: #2f80ed;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .cart-actions {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            width: 100%;
+        }
+        .cart-actions .btn {
+            min-width: 180px;
+            font-size: 1.08rem;
+            font-weight: 600;
+            border-radius: 22px;
+            padding: 12px 0;
+            box-shadow: 0 1.5px 6px 0 rgba(47,128,237,0.07);
+            border: none;
+            transition: background 0.3s, color 0.3s, transform 0.2s;
+        }
+        .cart-actions .btn-danger {
+            background: linear-gradient(45deg, #2f80ed, #56ccf2);
+            color: #fff;
+        }
+        .cart-actions .btn-danger:hover {
+            background: linear-gradient(45deg, #56ccf2, #2f80ed);
+            color: #fff;
+            transform: scale(1.04);
+        }
+        @media (max-width: 700px) {
+            .cart-summary {
+                max-width: 98vw;
+                padding: 18px 2vw 18px 2vw;
             }
-
-            .btn-remove:hover {
-                background-color: #cc0000;
-                color: white;
+            .cart-actions .btn {
+                min-width: 120px;
+                padding: 8px 0;
+                font-size: 0.95rem;
             }
-        </style>
+        }
+      </style>
 
    </head>
    <body>
@@ -99,7 +223,7 @@
           @endif
 
           <div class="center">
-            <table>
+            <table class="cart-table">
                 <tr>
                     <th class="th_deg">Product Title</th>
                     <th class="th_deg">Quantity</th>
@@ -113,9 +237,9 @@
                 <tr>
                     <td>{{$cart->product_title}}</td>
                     <td>{{$cart->quantity}}</td>
-                    <td>${{$cart->price}}</td>
+                    <td>Rs.{{$cart->price}}</td>
                     <td>
-                        <img class="img_deg" src="/product/{{$cart->image}}">
+                        <img class="img_deg" src="{{ asset('product/'.$cart->image) }}" alt="{{$cart->product_title}}">
                     </td>
                     <td>
                         <a href="javascript:void(0)" onclick="confirmDelete('{{url('/remove_cart',$cart->id)}}')" class="btn-remove">Remove Product</a>
@@ -124,27 +248,21 @@
                 <?php $totalprice=$totalprice + $cart->price  ?>
                 @endforeach
             </table>
-
-            <div>
-                <h1 class="total_deg">Total Price: ${{$totalprice}}</h1>
-            </div>
-
-            <div>
-                <h1 style="font-size: 25px; padding-bottom: 15px;">Proceed to Order</h1>
-                <a href="{{url('cash_order')}}" class="btn btn-danger">Cash On Delivery</a>
-                <a href="" class="btn btn-danger">Pay Using Card</a>
+            <div class="cart-summary">
+                <div class="cart-total">
+                    <span class="total-label">Total Price:</span>
+                    <span class="total-value">Rs.{{$totalprice}}</span>
+                </div>
+                <div class="cart-actions">
+                    <a href="{{url('cash_order')}}" class="btn btn-danger">Cash On Delivery</a>
+                    <a href="" class="btn btn-danger">Pay Using Card</a>
+                </div>
             </div>
           </div>
       </div>
 
       <!-- footer end -->
-      <div class="cpy_">
-         <p class="mx-auto">© 2021 All Rights Reserved By <a href="https://html.design/">Free Html Templates</a><br>
-         
-            Distributed By <a href="https://themewagon.com/" target="_blank">ThemeWagon</a>
-         
-         </p>
-      </div>
+      
       <!-- jQery -->
       <script src="home/js/jquery-3.4.1.min.js"></script>
       <!-- popper js -->

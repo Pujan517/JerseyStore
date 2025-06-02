@@ -2,7 +2,7 @@
          <div class="container">
             <div class="heading_container heading_center">
                <h2>
-                  Our <span>products</span>
+                  Featured <span>Products</span>
                </h2>
                <p class="section-subtitle">Discover our premium collection of football gear</p>
             </div>            <div class="row">
@@ -10,14 +10,18 @@
                <div class="col-sm-6 col-md-4 col-lg-4">
                   <div class="box">
                      <div class="img-box">
-                        <img src="product/{{$products->image}}" alt="{{$products->title}}">
+                        <img src="{{ asset('product/'.$products->image) }}" alt="{{$products->title}}">
                      </div>
                      <div class="detail-box">
                         <h5>{{$products->title}}</h5>
-                        <div class="price-box">                           @if($products->discount_price!=null)
+                        <div class="price-box">
+                           @if($products->discount_price!=null)
                            <div class="price-wrapper">
                               <h6 class="original-price">Rs. {{number_format($products->price, 2)}}</h6>
                               <h6 class="discounted-price">Rs. {{number_format($products->discount_price, 2)}}</h6>
+                              <span class="discount-tag">
+                                -{{ round((($products->price - $products->discount_price) / $products->price) * 100) }}% OFF
+                              </span>
                            </div>
                            @else
                            <h6 class="regular-price">Rs. {{number_format($products->price, 2)}}</h6>
@@ -48,45 +52,7 @@
                </div>               @endforeach
             </div>            @if($product->count() == 0)
                 <div class="p-4 text-blue-700 bg-blue-100 rounded">No products found</div>
-            @else
-                <div class="pagination-container my-4">
-                    <div class="pagination-wrapper">
-                        @if($product->hasPages())
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination justify-content-center">
-                                    {{-- Previous Page Link --}}
-                                    @if($product->onFirstPage())
-                                        <li class="page-item disabled">
-                                            <span class="page-link">&laquo;</span>
-                                        </li>
-                                    @else
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ route('products.page', ['page' => $product->currentPage() - 1]) }}" rel="prev">&laquo;</a>
-                                        </li>
-                                    @endif
 
-                                    {{-- Pagination Elements --}}
-                                    @for ($i = 1; $i <= $product->lastPage(); $i++)
-                                        <li class="page-item {{ ($product->currentPage() == $i) ? 'active' : '' }}">
-                                            <a class="page-link" href="{{ route('products.page', ['page' => $i]) }}">{{ $i }}</a>
-                                        </li>
-                                    @endfor
-
-                                    {{-- Next Page Link --}}
-                                    @if($product->hasMorePages())
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ route('products.page', ['page' => $product->currentPage() + 1]) }}" rel="next">&raquo;</a>
-                                        </li>
-                                    @else
-                                        <li class="page-item disabled">
-                                            <span class="page-link">&raquo;</span>
-                                        </li>
-                                    @endif
-                                </ul>
-                            </nav>
-                        @endif
-                    </div>
-                </div>
             @endif
          </div>
       </section>

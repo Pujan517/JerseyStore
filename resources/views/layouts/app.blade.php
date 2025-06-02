@@ -16,6 +16,11 @@
 
         <!-- Styles -->
         @livewireStyles
+        <style>
+            body {
+                background-color: #f3f4f6;  /* A light grey color */
+            }
+        </style>
     </head>
     <body class="font-sans antialiased">
         <x-banner />

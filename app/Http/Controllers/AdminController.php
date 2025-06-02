@@ -20,6 +20,14 @@ class AdminController extends Controller
     {
         $data = new Catagory;
         $data->catagory_name = $request->catagory;
+        
+        if($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagename = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('storage/category'), $imagename);
+            $data->image = $imagename;
+        }
+        
         $data->save();
         return redirect()->back()->with('message', 'Catagory Added Successfully');
     }
@@ -27,8 +35,48 @@ class AdminController extends Controller
     public function delete_catagory($id)
     {
         $data = Catagory::find($id);
+        
+        // Delete the image file if it exists
+        if($data->image) {
+            $imagePath = public_path('storage/category/' . $data->image);
+            if(file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+        
         $data->delete();
         return redirect()->back()->with('message', 'Catagory Deleted Successfully');
+    }
+
+    public function edit_catagory($id)
+    {
+        $category = Catagory::find($id);
+        return view('admin.edit_catagory', compact('category'));
+    }
+
+    public function update_catagory(Request $request, $id)
+    {
+        $category = Catagory::find($id);
+        $category->catagory_name = $request->catagory;
+        
+        if($request->hasFile('image')) {
+            // Delete old image if it exists
+            if($category->image) {
+                $old_image_path = public_path('storage/category/' . $category->image);
+                if(file_exists($old_image_path)) {
+                    unlink($old_image_path);
+                }
+            }
+            
+            // Upload new image
+            $image = $request->file('image');
+            $imagename = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('storage/category'), $imagename);
+            $category->image = $imagename;
+        }
+        
+        $category->save();
+        return redirect()->back()->with('message', 'Category Updated Successfully');
     }
 
     public function view_product()
@@ -46,6 +94,7 @@ class AdminController extends Controller
         $product->quantity = $request->quantity;
         $product->discount_price = $request->dis_price;
         $product->catagory = $request->catagory;
+        $product->featured = $request->has('featured');
 
         $image = $request->image;
         $imagename = time().'.'.$image->getClientOriginalExtension();
@@ -85,6 +134,7 @@ class AdminController extends Controller
         $product->discount_price = $request->dis_price;
         $product->catagory = $request->catagory;
         $product->quantity = $request->quantity;
+        $product->featured = $request->has('featured');
         
         if($request->image) {
             $imagename = time().'.'.$request->image->getClientOriginalExtension();
@@ -137,8 +187,22 @@ class AdminController extends Controller
 
     public function searchdata(Request $request)
     {
-        $searchText = $request->search; 
-        $order = order::where('name','LIKE',"%searchText%")->orWhere('phone','LIKE',"%searchText%")->orWhere('product_title','LIKE',"%searchText%")->get;
-        return view('admin.order',compact('order'));  
+        $searchText = $request->search;
+        $order = Order::where('name','LIKE',"%{$searchText}%")
+            ->orWhere('phone','LIKE',"%{$searchText}%")
+            ->orWhere('product_title','LIKE',"%{$searchText}%")
+            ->get();
+        return view('admin.order',compact('order'));
+    }
+
+    public function search_product(Request $request)
+    {
+        $search = $request->input('search');
+        $products = Product::where('title', 'LIKE', "%{$search}%")
+            ->orWhere('description', 'LIKE', "%{$search}%")
+            ->orWhere('catagory', 'LIKE', "%{$search}%")
+            ->orWhere('price', 'LIKE', "%{$search}%")
+            ->get();
+        return view('admin.show_product', ['product' => $products]);
     }
 }

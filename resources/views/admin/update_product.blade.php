@@ -70,7 +70,8 @@
                     </div>
                     <div class="div_design">
                         <label>Discount Price: </label>
-                        <input class="text_color" type="number" name="dis_price" placeholder="Write a discount is apply" value="{{$product->discount_price}}">
+                        <input class="text_color" type="number" name="dis_price" id="discount_price" placeholder="Write a discount if apply" value="{{$product->discount_price}}" step="0.01">
+                        <span id="percentage_off" style="color: #e74c3c; font-weight: 600; margin-left: 10px;"></span>
                     </div>
                     <div class="div_design">
                         <label>Product Quantity: </label>
@@ -98,6 +99,11 @@
                     </div>
 
                     <div class="div_design">
+                        <label>Featured Product:</label>
+                        <input type="checkbox" name="featured" value="1" {{ $product->featured ? 'checked' : '' }}> Mark as Featured
+                    </div>
+
+                    <div class="div_design">
                         <input type="submit" value="Update Product" class="btn btn-primary">
                     </div>
 
@@ -110,5 +116,26 @@
     <!-- plugins:js -->
     @include('admin.script')
     <!-- End custom js for this page -->
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const priceInput = document.querySelector('input[name="price"]');
+    const discountInput = document.getElementById('discount_price');
+    const percentSpan = document.getElementById('percentage_off');
+    function updatePercent() {
+        const price = parseFloat(priceInput.value);
+        const discount = parseFloat(discountInput.value);
+        if (price > 0 && discount > 0 && discount < price) {
+            const percent = Math.round(((price - discount) / price) * 100);
+            percentSpan.textContent = `(${percent}% OFF)`;
+        } else {
+            percentSpan.textContent = '';
+        }
+    }
+    priceInput.addEventListener('input', updatePercent);
+    discountInput.addEventListener('input', updatePercent);
+    // Initial update
+    updatePercent();
+});
+</script>
   </body>
 </html>
