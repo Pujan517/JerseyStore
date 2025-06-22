@@ -29,9 +29,11 @@
         :root {
             --primary-color: #2f80ed;
             --secondary-color: #56ccf2;
-            --danger-color: #ff4444;
-            --text-color: #222;
-            --light-gray: #e0e0e0;
+            --accent-color: #3498db;
+            --text-color: #2c3e50;
+            --light-gray: #f8f9fa;
+            --dark-gray: #343a40;
+            --danger-color:#ff4444;
         }
         .cart-table {
             width: 100%;
@@ -206,6 +208,46 @@
                 font-size: 0.95rem;
             }
         }
+                /* Header pill style for all_products page */
+        .header_section {
+            padding: -100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-color) !important;
+            margin: 0 10px;
+            position: relative;
+        }
+
+        .navbar {
+            width: 70%;
+            margin: 30px auto 0 auto;
+            border-radius: 50px;
+            background: #fff;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.04);
+            padding: 18px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .deals-banner {
+        width: 70%;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        padding: 10px 0;
+        margin-top: 20px;
+        border-radius: 25px;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
       </style>
 
    </head>
@@ -255,7 +297,7 @@
                 </div>
                 <div class="cart-actions">
                     <a href="{{url('cash_order')}}" class="btn btn-danger">Cash On Delivery</a>
-                    <a href="" class="btn btn-danger">Pay Using Card</a>
+                    <a href="" class="btn btn-danger">Pay Using Esewa</a>
                 </div>
             </div>
           </div>

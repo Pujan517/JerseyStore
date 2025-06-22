@@ -20,6 +20,11 @@
             body {
                 background-color: #f3f4f6;  /* A light grey color */
             }
+            /* Remove outer white background from app layout */
+            .bg-white.shadow {
+                background: transparent !important;
+                box-shadow: none !important;
+            }
         </style>
     </head>
     <body class="font-sans antialiased">

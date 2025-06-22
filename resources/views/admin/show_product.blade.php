@@ -141,8 +141,8 @@
                         <td>{{$product->description}}</td>
                         <td>{{$product->quantity}}</td>
                         <td>{{$product->catagory}}</td>
-                        <td>{{$product->price}}</td>
-                        <td>{{$product->discount_price}}</td>
+                        <td>Rs.{{$product->price}}</td>
+                        <td>Rs.{{$product->discount_price}}</td>
                         <td>
                             <img class="img_size" src="{{ asset('product/'.$product->image) }}" alt="{{$product->title}}">
                         </td>

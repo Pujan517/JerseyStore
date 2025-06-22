@@ -154,16 +154,74 @@
                         <label>Featured Product:</label>
                         <input type="checkbox" name="featured" value="1"> Mark as Featured
                     </div>
+                    <div class="div_design">
+                        <label>Available Sizes:</label>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                            <label style="font-weight:600; color:#fff; margin-right:18px;">
+                                <input type="checkbox" id="select-all-sizes"> All
+                            </label>
+                            @foreach(['S','M','L','XL','XXL','XXXL'] as $size)
+                                <label style="font-weight:400; color:#fff;">
+                                    <input type="checkbox" class="size-checkbox" name="sizes[]" value="{{ $size }}"> {{ $size }}
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="div_design">
+                        <label>Product Tags: <span style="font-weight:400; color:#bbb; font-size:0.95em;">(comma separated)</span></label>
+                        <input class="text_color" type="text" name="tags" placeholder="e.g. football,shoes,adidas">
+                    </div>
 
                     <div class="div_design">
                         <input type="submit" value="Add Product" class="btn btn-primary">
                     </div>
 
                 </form>
- 
-                </div>
             </div>
+
+            @if(isset($products))
+            <div style="margin-top: 40px;">
+                <h2 class="font_size">Searched Products</h2>
+                <table class="center" style="width:100%; background:#111; color:#eee; border-radius:12px; overflow:hidden;">
+                    <tr class="th_color">
+                        <th>Product Title</th>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Catagory</th>
+                        <th>Price</th>
+                        <th>Discount Price</th>
+                        <th>Product Image</th>
+                        <th>Delete</th>
+                        <th>Edit</th>
+                    </tr>
+                    @forelse($products as $product)
+                    <tr>
+                        <td>{{$product->title}}</td>
+                        <td>{{$product->description}}</td>
+                        <td>{{$product->quantity}}</td>
+                        <td>{{$product->catagory}}</td>
+                        <td>{{$product->price}}</td>
+                        <td>{{$product->discount_price}}</td>
+                        <td>
+                            <img class="img_size" src="{{ asset('product/'.$product->image) }}" alt="{{$product->title}}" style="width:90px; height:60px; object-fit:cover; border-radius:8px; background:#222;">
+                        </td>
+                        <td>
+                            <a onclick="return confirm('Are You Sure To Delete This')" class="btn btn-danger" href="{{url('delete_product',$product->id)}}">Delete</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-success" href="{{url('update_product',$product->id)}}">Edit</a>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="9" style="text-align:center; color:#e74c3c; font-weight:600;">No products found.</td>
+                    </tr>
+                    @endforelse
+                </table>
+            </div>
+            @endif
         </div>
+    </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
     @include('admin.script')
@@ -185,7 +243,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     priceInput.addEventListener('input', updatePercent);
     discountInput.addEventListener('input', updatePercent);
+
+    const allCheckbox = document.getElementById('select-all-sizes');
+    const sizeCheckboxes = document.querySelectorAll('.size-checkbox');
+    allCheckbox.addEventListener('change', function() {
+        sizeCheckboxes.forEach(cb => cb.checked = allCheckbox.checked);
+    });
+    sizeCheckboxes.forEach(cb => {
+        cb.addEventListener('change', function() {
+            allCheckbox.checked = Array.from(sizeCheckboxes).every(cb => cb.checked);
+        });
+    });
 });
 </script>
   </body>
 </html>
+
+<!-- ADMIN PRODUCT PAGE VIEW (DEBUG MARKER) -->

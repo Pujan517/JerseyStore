@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Catagory;
 use App\Models\Product;
 use App\Models\Order; 
+use App\Models\User;
 use PDF;
 
 class AdminController extends Controller
@@ -95,12 +96,12 @@ class AdminController extends Controller
         $product->discount_price = $request->dis_price;
         $product->catagory = $request->catagory;
         $product->featured = $request->has('featured');
-
+        $product->sizes = json_encode($request->input('sizes', []));
         $image = $request->image;
         $imagename = time().'.'.$image->getClientOriginalExtension();
         $request->image->move('product', $imagename);
         $product->image = $imagename;
-
+        $product->tags = $request->tags;
         $product->save();
         return redirect()->back()->with('message', 'Product Added Successfully'); 
     }
@@ -135,13 +136,13 @@ class AdminController extends Controller
         $product->catagory = $request->catagory;
         $product->quantity = $request->quantity;
         $product->featured = $request->has('featured');
-        
+        $product->sizes = json_encode($request->input('sizes', []));
         if($request->image) {
             $imagename = time().'.'.$request->image->getClientOriginalExtension();
             $request->image->move('product', $imagename);
             $product->image = $imagename;
         }
-
+        $product->tags = $request->tags;
         $product->save();
         return redirect()->back()->with('message', 'Product Updated Successfully');
     }
@@ -197,12 +198,14 @@ class AdminController extends Controller
 
     public function search_product(Request $request)
     {
+        \Log::info('ADMIN SEARCH PRODUCT CONTROLLER HIT', ['search' => $request->input('search')]);
         $search = $request->input('search');
         $products = Product::where('title', 'LIKE', "%{$search}%")
             ->orWhere('description', 'LIKE', "%{$search}%")
             ->orWhere('catagory', 'LIKE', "%{$search}%")
             ->orWhere('price', 'LIKE', "%{$search}%")
             ->get();
-        return view('admin.show_product', ['product' => $products]);
+        $catagories = Catagory::all();
+        return view('admin.product', ['products' => $products, 'catagories' => $catagories]);
     }
 }

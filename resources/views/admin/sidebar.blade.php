@@ -1,8 +1,8 @@
 <div class="sidebar">
     <div class="sidebar-wrapper">
         <ul class="nav">
-            @auth            <li class="nav-item {{ request()->is('admin/dashboard') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('/admin/dashboard') }}">
+            @auth            <li class="nav-item {{ request()->is('/dashboard') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ url('/dashboard') }}">
                     <i class="fas fa-home"></i>
                     <p>Dashboard</p>
                 </a>

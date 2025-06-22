@@ -19,7 +19,7 @@
                            <div class="price-wrapper">
                               <h6 class="original-price">Rs. {{number_format($products->price, 2)}}</h6>
                               <h6 class="discounted-price">Rs. {{number_format($products->discount_price, 2)}}</h6>
-                              <span class="discount-tag">
+                              <span class="discount-tag" style="background-color:red">
                                 -{{ round((($products->price - $products->discount_price) / $products->price) * 100) }}% OFF
                               </span>
                            </div>

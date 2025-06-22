@@ -15,7 +15,7 @@ class AutocompleteController extends Controller
             $results = Product::where('title', 'like', "%{$query}%")
                 ->orderByDesc('popularity') // If you have a popularity column
                 ->take(10)
-                ->get(['id', 'title', 'popularity']);
+                ->get(['id', 'title', 'image', 'price', 'popularity']);
         }
         return response()->json($results);
     }

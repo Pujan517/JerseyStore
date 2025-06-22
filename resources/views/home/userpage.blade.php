@@ -21,8 +21,8 @@
       <!-- Custom Styles -->
       <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #e74c3c;
+            --primary-color: #2f80ed;
+            --secondary-color: #56ccf2;
             --accent-color: #3498db;
             --text-color: #2c3e50;
             --light-gray: #f8f9fa;
@@ -69,6 +69,16 @@
 
         .nav-link:hover::after {
             width: 100%;
+        }
+
+        .nav-item.active .nav-link {
+            background: #e3f0ff !important;
+            color: #1e40af !important;
+            font-weight: bold !important;
+            font-weight: 500;
+            color: var(--text-color) !important;
+            margin: 0 10px;
+            position: relative;
         }
 
         .section-title {
@@ -282,6 +292,39 @@
             </div>
          </div>
       </section>
+
+      <!-- Recommendations -->
+      @if(isset($recommendations) && $recommendations->count())
+      <section class="recommendations-section py-5">
+         <div class="container">
+            <h2 class="section-title">Recommended for You</h2>
+            <div class="row">
+               @foreach($recommendations as $product)
+                  <div class="col-md-3 mb-4">
+                     <div class="card h-100">
+                        <div class="product-image">
+                           <a href="{{ route('product.details', $product->id) }}">
+                              <img src="{{ asset('product/'.$product->image) }}" alt="{{ $product->title }}">
+                           </a>
+                        </div>
+                        <div class="product-info">
+                           <div class="product-title">{{ $product->title }}</div>
+                           <div class="product-price">
+                              @if($product->discount_price)
+                                 Rs.{{ $product->discount_price }} <span class="text-muted text-decoration-line-through">Rs.{{ $product->price }}</span>
+                              @else
+                                 Rs.{{ $product->price }}
+                              @endif
+                           </div>
+                           <a href="{{ route('product.details', $product->id) }}" class="btn btn-primary mt-2">View</a>
+                        </div>
+                     </div>
+                  </div>
+               @endforeach
+            </div>
+         </div>
+      </section>
+      @endif
 
       <!-- Testimonials -->
       <section class="testimonials-section py-5">

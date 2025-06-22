@@ -58,8 +58,8 @@
       <!-- Custom Styles -->
       <style>
          :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #e74c3c;
+            --primary-color: #2f80ed;
+            --secondary-color: #56ccf2;
             --accent-color: #3498db;
             --text-color: #2c3e50;
             --light-gray: #f8f9fa;
@@ -249,6 +249,48 @@
          .btn-explore:hover i {
             transform: translateX(5px);
          }
+
+         .navbar {
+            width: 70%;
+            margin: 30px auto 0 auto;
+            border-radius: 50px;
+            background: #fff;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.04);
+            padding: 18px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .deals-banner {
+        width: 70%;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        padding: 10px 0;
+        margin-top: 20px;
+        border-radius: 25px;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .header_section {
+      padding: -100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      margin: 0;
+      padding: 0;
+   }
+   .nav-item.active .nav-link {
+       background: #e3f0ff !important;
+       color: #1e40af !important;
+       font-weight: bold !important;
+       font-weight: 500;
+       color: var(--text-color) !important;
+       margin: 0 10px;
+       position: relative;
+   }
 
          @media (max-width: 768px) {
             .categories-section {

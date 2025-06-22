@@ -11,13 +11,17 @@ use App\Models\Product;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Catagory;
+use Illuminate\Support\Facades\Log;
+use App\Services\RecommendationService;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(RecommendationService $service)
     {
-        $product = Product::where('featured', true)->paginate(6); 
-        return view('home.userpage',compact('product'));
+        $product = Product::where('featured', true)->paginate(6);
+        $user = Auth::user();
+        $recommendations = $service->getRecommendations($user, 4); // Show 4 recommendations on homepage
+        return view('home.userpage', compact('product', 'recommendations'));
     }
      
     public function redirect()
@@ -58,25 +62,95 @@ class HomeController extends Controller
     }
 
     public function product_details($id){
-
-        $product=product::find($id);
-        return view('home.product_details',compact('product'));
+        $product = Product::find($id);
+        $sizes = [];
+        if ($product && $product->sizes) {
+            $sizes = json_decode($product->sizes, true);
+        }
+        // Record view activity
+        if (Auth::check()) {
+            \App\Models\UserActivity::create([
+                'user_id' => Auth::id(),
+                'product_id' => $id,
+                'type' => 'view',
+            ]);
+        }
+        return view('home.product_details', compact('product', 'sizes'));
     }
 
-public function all_products() {
-    $products = Product::paginate(12);
-    return view('home.all_products', compact('products'));
-}
+    public function all_products(Request $request)
+    {
+        $query = Product::query();
+
+        // League/Category filter
+        if ($request->filled('category')) {
+            $query->where('catagory', $request->input('category'));
+        }
+
+        // Size filter (support multiple sizes)
+        if ($request->filled('size')) {
+            $sizes = (array) $request->input('size');
+            $query->where(function ($q) use ($sizes) {
+                foreach ($sizes as $size) {
+                    $q->orWhereJsonContains('sizes', $size);
+                }
+            });
+        }
+
+        // Price range filter (use discount_price if set, else price)
+        if ($request->filled('min_price')) {
+            $query->where(function($q) use ($request) {
+                $q->where(function($sub) use ($request) {
+                    $sub->whereNotNull('discount_price')->where('discount_price', '>=', $request->input('min_price'));
+                })->orWhere(function($sub) use ($request) {
+                    $sub->whereNull('discount_price')->where('price', '>=', $request->input('min_price'));
+                });
+            });
+        }
+        if ($request->filled('max_price')) {
+            $query->where(function($q) use ($request) {
+                $q->where(function($sub) use ($request) {
+                    $sub->whereNotNull('discount_price')->where('discount_price', '<=', $request->input('max_price'));
+                })->orWhere(function($sub) use ($request) {
+                    $sub->whereNull('discount_price')->where('price', '<=', $request->input('max_price'));
+                });
+            });
+        }
+
+        // Availability filter
+        if ($request->filled('availability')) {
+            if ($request->input('availability') === 'in_stock') {
+                $query->where('quantity', '>', 0);
+            } elseif ($request->input('availability') === 'out_of_stock') {
+                $query->where('quantity', '<=', 0);
+            }
+        }
+
+        // Debug: Log max_price from request
+        Log::debug('Request max_price', ['max_price' => $request->input('max_price')]);
+        // Debug: Log SQL query and bindings
+        Log::debug('SQL', [$query->toSql(), $query->getBindings()]);
+        $products = $query->get();
+        // Debug: Log discount_price of all returned products
+        Log::debug('Filtered products discount_price', $products->pluck('discount_price')->toArray());
+        $categories = Catagory::all();
+        $sizes = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+
+        return view('home.all_products', [
+            'products' => $products,
+            'categories' => $categories,
+            'sizes' => $sizes,
+        ]);
+    }
 
 
 
     public function add_cart(Request $request, $id){
 
         if(Auth::id()){
-            
             $user = Auth::user();
             $product = Product::find($id);
-            $cart = new Cart; // Use correct case
+            $cart = new Cart;
             $cart->name = $user->name;
             $cart->email = $user->email;
             $cart->phone = $user->phone;
@@ -93,7 +167,22 @@ public function all_products() {
             $cart->Product_id = $product->id;
             $cart->quantity = $request->quantity;
 
+            // Validate and set size
+            if ($product->sizes && $request->has('selected_size')) {
+                $cart->size = $request->selected_size;
+            } elseif (!$product->sizes) {
+                $cart->size = 'N/A'; // or any default value
+            } else {
+                return redirect()->back()->with('error', 'Please select a size.');
+            }
+
             $cart->save();
+            // Record add-to-cart as a 'view' activity (optional, or use 'cart' if you want to distinguish)
+            \App\Models\UserActivity::create([
+                'user_id' => $user->id,
+                'product_id' => $product->id,
+                'type' => 'view',
+            ]);
             return redirect()->back()->with('message', 'Product added to cart successfully!');
         }
         else{
@@ -144,11 +233,16 @@ public function all_products() {
             $order->image=$data->image;
 
             $order->product_id=$data->Product_id;
-
             $order->payment_status='cash on delivery';
             $order->delivery_status='processing';
-
             $order->save();
+
+            // Record purchase activity
+            \App\Models\UserActivity::create([
+                'user_id' => $user->id,
+                'product_id' => $data->Product_id,
+                'type' => 'purchase',
+            ]);
 
             $cart_id=$data->id;
             $cart=cart::find($cart_id); 
@@ -197,60 +291,107 @@ public function all_products() {
     {
         $category = Catagory::findOrFail($id);
         $products = Product::where('catagory', $category->catagory_name)->paginate(6);
-        return view('home.all_products', compact('products'));
+        $categories = Catagory::all();
+        $sizes = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+        return view('home.all_products', [
+            'products' => $products,
+            'categories' => $categories,
+            'sizes' => $sizes,
+        ]);
     }
 
     public function search_product(Request $request)
     {
         $search = $request->search;
         $terms = explode(' ', $search);
-        
-        $products = Product::where(function($query) use ($terms) {
-            foreach ($terms as $term) {
-                $query->where(function($q) use ($term) {
-                    // Search in product fields with different weights
-                    $q->whereRaw("LOWER(title) LIKE ?", ['%' . strtolower($term) . '%'])
-                      ->orWhereRaw("LOWER(description) LIKE ?", ['%' . strtolower($term) . '%'])
-                      ->when(is_numeric($term), function($q) use ($term) {
-                          // Handle price range searches (e.g., "under 100" or "100-200")
-                          if (strpos($term, '-') !== false) {
-                              list($min, $max) = explode('-', $term);
-                              $q->orWhereBetween('price', [(float)$min, (float)$max]);
-                          } else {
-                              $q->orWhere('price', '<=', (float)$term);
-                          }
-                      });
-                });
-            }
-        })
-        ->orWhereHas('category', function($query) use ($terms) {
-            foreach ($terms as $term) {
-                $query->orWhereRaw("LOWER(catagory_name) LIKE ?", ['%' . strtolower($term) . '%']);
-            }
-        })
-        ->orderByRaw("
-            CASE 
-                WHEN title LIKE ? THEN 1
-                WHEN title LIKE ? THEN 2
-                WHEN description LIKE ? THEN 3
-                ELSE 4
-            END", 
-            [
-                $search . '%',
-                '%' . $search . '%',
-                '%' . $search . '%'
-            ]
-        )
-        ->with('category') // Eager load category relationship
-        ->paginate(12);
+        $query = Product::query();
 
-        // Get related categories for search refinement
+        // Search in title, description, tags, category with relevance
+        $query->selectRaw('products.*, (
+            (CASE WHEN LOWER(title) LIKE ? THEN 10 ELSE 0 END) +
+            (CASE WHEN LOWER(description) LIKE ? THEN 5 ELSE 0 END) +
+            (CASE WHEN LOWER(catagory) LIKE ? THEN 3 ELSE 0 END) +
+            (CASE WHEN LOWER(tags) LIKE ? THEN 2 ELSE 0 END)
+        ) as relevance', [
+            '%' . strtolower($search) . '%',
+            '%' . strtolower($search) . '%',
+            '%' . strtolower($search) . '%',
+            '%' . strtolower($search) . '%',
+        ]);
+        $query->where(function($q) use ($terms) {
+            foreach ($terms as $term) {
+                $q->orWhereRaw("LOWER(title) LIKE ?", ['%' . strtolower($term) . '%'])
+                  ->orWhereRaw("LOWER(description) LIKE ?", ['%' . strtolower($term) . '%'])
+                  ->orWhereRaw("LOWER(tags) LIKE ?", ['%' . strtolower($term) . '%'])
+                  ->orWhereRaw("LOWER(catagory) LIKE ?", ['%' . strtolower($term) . '%']);
+            }
+        });
+
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('catagory', $request->input('category'));
+        }
+        // Size filter
+        if ($request->filled('size')) {
+            $sizes = (array) $request->input('size');
+            $query->where(function ($q) use ($sizes) {
+                foreach ($sizes as $size) {
+                    $q->orWhereJsonContains('sizes', $size);
+                }
+            });
+        }
+        // Price range filter
+        if ($request->filled('min_price')) {
+            $query->where(function($q) use ($request) {
+                $q->where(function($sub) use ($request) {
+                    $sub->whereNotNull('discount_price')->where('discount_price', '>=', $request->input('min_price'));
+                })->orWhere(function($sub) use ($request) {
+                    $sub->whereNull('discount_price')->where('price', '>=', $request->input('min_price'));
+                });
+            });
+        }
+        if ($request->filled('max_price')) {
+            $query->where(function($q) use ($request) {
+                $q->where(function($sub) use ($request) {
+                    $sub->whereNotNull('discount_price')->where('discount_price', '<=', $request->input('max_price'));
+                })->orWhere(function($sub) use ($request) {
+                    $sub->whereNull('discount_price')->where('price', '<=', $request->input('max_price'));
+                });
+            });
+        }
+        // Availability filter
+        if ($request->filled('availability')) {
+            if ($request->input('availability') === 'in_stock') {
+                $query->where('quantity', '>', 0);
+            } elseif ($request->input('availability') === 'out_of_stock') {
+                $query->where('quantity', '<=', 0);
+            }
+        }
+
+        // Order by relevance
+        $query->orderByDesc('relevance');
+
+        // Pagination
+        $products = $query->paginate(12)->appends($request->all());
+
+        $categories = Catagory::all();
+        $sizes = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
         $relatedCategories = Catagory::whereHas('products', function($query) use ($search) {
             $query->whereRaw("LOWER(title) LIKE ?", ['%' . strtolower($search) . '%'])
                   ->orWhereRaw("LOWER(description) LIKE ?", ['%' . strtolower($search) . '%']);
         })->take(5)->get();
 
-        return view('home.all_products', compact('products', 'search', 'relatedCategories'));
+        return view('home.all_products', compact('products', 'search', 'relatedCategories', 'categories', 'sizes'));
+    }
+
+    /**
+     * Show personalized or trending product recommendations
+     */
+    public function recommendations(RecommendationService $service)
+    {
+        $user = Auth::user();
+        $products = $service->getRecommendations($user, 8);
+        return view('home.recommendations', compact('products'));
     }
 }
 

@@ -21,8 +21,10 @@ Route::middleware(['throttle:login'])->group(function () {
 Route::get('/categories', [HomeController::class, 'show_categories'])->name('categories');
 
 // Admin Routes
+Route::get('/admin/search_product', [AdminController::class, 'search_product'])->name('admin.products.search');
+
 Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.home');
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.home');
     Route::get('/view_catagory', [AdminController::class, 'view_catagory'])->name('admin.categories.index');
     Route::post('/add_catagory', [AdminController::class, 'add_catagory'])->name('admin.categories.store');
     Route::get('/delete_catagory/{id}', [AdminController::class, 'delete_catagory'])->name('admin.categories.destroy');
@@ -40,13 +42,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/search', [AdminController::class, 'searchdata']);
     Route::get('/edit_catagory/{id}', [AdminController::class, 'edit_catagory']);
     Route::post('/update_catagory/{id}', [AdminController::class, 'update_catagory']);
-    Route::get('/search_product', [AdminController::class, 'search_product'])->name('admin.products.search');
 });
 
 // Home Routes
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/products/page/{page}', [HomeController::class, 'index'])->name('products.page');
-Route::get('/product_details/{id}', [HomeController::class, 'product_details']);
+Route::get('/product_details/{id}', [HomeController::class, 'product_details'])->name('product.details');
 Route::get('/all_products', [HomeCOntroller::class, 'all_products'])->name('products.all');
 Route::get('/categories', [HomeController::class, 'show_categories'])->name('categories');
 Route::get('/category_products/{id}', [HomeController::class, 'category_products'])->name('category.products');
@@ -76,5 +77,8 @@ Route::post('/contact', [ContactController::class, 'submit'])->name('contact.sub
 
 // Autocomplete predictive search route
 Route::get('/autocomplete', [\App\Http\Controllers\AutocompleteController::class, 'products'])->name('autocomplete');
+
+// Recommendations Route
+Route::get('/recommendations', [HomeController::class, 'recommendations'])->name('recommendations');
 
 

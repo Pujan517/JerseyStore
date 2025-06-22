@@ -23,6 +23,54 @@
             font-style: normal;
         }
         /* Removed body background override to keep site default */
+         :root {
+            --primary-color: #2f80ed;
+            --secondary-color: #56ccf2;
+            --accent-color: #3498db;
+            --text-color: #2c3e50;
+            --light-gray: #f8f9fa;
+            --dark-gray: #343a40;
+         }
+          .navbar {
+            width: 70%;
+            margin: 30px auto 0 auto;
+            border-radius: 50px;
+            background: #fff;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.04);
+            padding: 18px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .deals-banner {
+        width: 70%;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        padding: 10px 0;
+        margin-top: 20px;
+        border-radius: 25px;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+     .header_section {
+      padding: -100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      margin: 0;
+      padding: 0;
+   }
+   .nav-item.active .nav-link {
+       background: #e3f0ff !important;
+       color: #1e40af !important;
+       font-weight: bold !important;
+       font-weight: 500;
+       color: var(--text-color) !important;
+       margin: 0 10px;
+       position: relative;
+   }
         .glass-card {
             background: rgba(255,255,255,0.85);
             border-radius: 24px;
@@ -181,14 +229,36 @@
                             @endif
                         </div>
                         <div class="product-description">{{$product->description}}</div>
+                        @if(!empty($sizes))
+                        <div class="mb-3">
+                            <div class="mb-2">Available Sizes:</div>
+                            <div style="margin-bottom: 0.5rem;">
+                                @foreach($sizes as $size)
+                                    <span class="badge badge-info" style="background:#3b82f6;color:#fff;margin-right:6px;">{{$size}}</span>
+                                @endforeach
+                            </div>
+                            <form action="{{url('add_cart',$product->id)}}" method="POST" class="d-flex align-items-center" style="gap: 1rem; margin-bottom: 0;">
+                                @csrf
+                                <select name="selected_size" class="form-control" style="max-width:160px;margin-right:10px;z-index:2;position:relative;background:#fff;color:#222;font-weight:600;appearance: menulist;min-width:120px;height:auto;line-height:1.5;box-shadow:none;" required>
+                                    <option value="" disabled selected>Select size</option>
+                                    @foreach($sizes as $size)
+                                        <option value="{{$size}}">{{$size}}</option>
+                                    @endforeach
+                                </select>
+                                <input min="1" type="number" value="1" name="quantity" class="form-control" style="max-width: 80px; min-width: 60px; margin-right: 10px;" required @if($product->quantity==0) disabled @endif>
+                                <input type="submit" class="btn btn-primary" value="Add To Cart" style="min-width: 130px;" @if($product->quantity==0) disabled @endif>
+                            </form>
+                        </div>
+                        @else
                         <div class="add-cart-area">
                             <form action="{{url('add_cart',$product->id)}}" method="POST" class="d-flex align-items-center" style="gap: 1rem; margin-bottom: 0;">
                                 @csrf
                                 <input min="1" type="number" value="1" name="quantity" class="form-control" style="max-width: 80px; min-width: 60px; margin-right: 10px;" required @if($product->quantity==0) disabled @endif>
                                 <input type="submit" class="btn btn-primary" value="Add To Cart" style="min-width: 130px;" @if($product->quantity==0) disabled @endif>
                             </form>
-                            <span class="text-muted" style="font-size:1.05rem; margin-left: 18px; white-space: nowrap;">Available: {{$product->quantity}}</span>
                         </div>
+                        @endif
+                        <span class="text-muted" style="font-size:1.05rem; margin-left: 18px; white-space: nowrap;">Available: {{$product->quantity}}</span>
                     </div>
                 </div>
             </div>

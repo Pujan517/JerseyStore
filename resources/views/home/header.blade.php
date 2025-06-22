@@ -43,9 +43,10 @@
                                     <button type="submit" class="btn-search">
                                         <i class="fas fa-search"></i>
                                     </button>
-                                    <div id="autocomplete-results" class="autocomplete-results"></div>
+                                    <div id="recent-searches" class="autocomplete-results" style="display:none; position:absolute; left:0; right:0; top:100%; background:#fff; z-index:1000; border-radius:0 0 10px 10px; box-shadow:0 4px 16px rgba(44,62,80,0.10); color:#222; max-height:220px; overflow-y:auto;"></div>
                                 </div>
                             </form>
+                            <div id="autocomplete-results" class="autocomplete-results"></div>
                         </div>
                     </div>
 
@@ -138,12 +139,12 @@
         font-size: 1.8rem;
         font-weight: 800;
         background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        font-family: 'Playfair Display';
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         letter-spacing: 2px;
     }    /* Navigation */
     .nav-link {
-        font-weight: 900; /* Make navigation text extra bold */
         font-size: 0.95rem;
         padding: 8px 20px !important;
         color: var(--text-color) !important;
@@ -564,11 +565,12 @@
 
     .autocomplete-results {
     position: absolute;
-    top: 110%;
+    width: 100%;
+    top: 65%;
     left: 0;
     right: 0;
     background: #fff;
-    border-radius: 10px;
+    border-radius: 0 0 10px 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     z-index: 2000;
     max-height: 300px;
@@ -576,6 +578,8 @@
     border: 1px solid #eee;
     display: none;
 }
+
+
 .autocomplete-item {
     padding: 10px 15px;
     cursor: pointer;
@@ -681,10 +685,12 @@
                                 resultsBox.innerHTML = '<div class="autocomplete-item">No results found</div>';
                             } else {
                                 resultsBox.innerHTML = data.map(item =>
-                                    `<div class="autocomplete-item${item.popularity && item.popularity > 10 ? ' popular' : ''}" 
-                                        data-title="${item.title}" data-id="${item.id}">
-                                        ${item.title}
-                                        ${item.popularity && item.popularity > 10 ? ' <span style=\"font-size:0.8em;\">🔥</span>' : ''}
+                                    `<div class="autocomplete-item d-flex align-items-center" data-title="${item.title}" data-id="${item.id}">
+                                        <img src="/product/${item.image}" alt="${item.title}" style="width:38px;height:38px;object-fit:cover;border-radius:8px;margin-right:12px;border:1px solid #eee;background:#fafbfc;">
+                                        <div style="flex:1;">
+                                            <div style="font-weight:600;font-size:1.01em;">${item.title}</div>
+                                            <div style="color:#2f80ed;font-weight:500;font-size:0.97em;">Rs.${item.price}</div>
+                                        </div>
                                     </div>`
                                 ).join('');
                             }
@@ -694,20 +700,30 @@
                 }, 200);
             });
 
+            // Convert string to kebab-case for slug
+            function toKebabCase(str) {
+                return str
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '') // Remove non-alphanumeric except space and hyphen
+                    .replace(/\s+/g, '-')         // Replace spaces with hyphens
+                    .replace(/-+/g, '-')           // Replace multiple hyphens with single
+                    .replace(/^-+|-+$/g, '');      // Trim hyphens from start/end
+            }
+
             resultsBox.addEventListener('click', function(e) {
-    const item = e.target.closest('.autocomplete-item');
-    if (item && item.hasAttribute('data-title')) {
-        const productId = item.getAttribute('data-id');
-        if (productId) {
-            window.location.href = `/product_details/${productId}`;
-        } else {
-            searchInput.value = item.getAttribute('data-title');
-            resultsBox.style.display = 'none';
-            searchPopup.classList.remove('active');
-            searchInput.form.submit();
-        }
-    }
-});
+                const item = e.target.closest('.autocomplete-item');
+                if (item && item.hasAttribute('data-title')) {
+                    const productId = item.getAttribute('data-id');
+                    if (productId) {
+                        window.location.href = `/product_details/${productId}`;
+                    } else {
+                        searchInput.value = item.getAttribute('data-title');
+                        resultsBox.style.display = 'none';
+                        searchPopup.classList.remove('active');
+                        searchInput.form.submit();
+                    }
+                }
+            });
 
             document.addEventListener('click', function(e) {
                 if (!searchPopup.contains(e.target) && e.target !== searchInput) {
@@ -717,4 +733,59 @@
             });
         }
     });
+
+    // Recent searches functionality
+    (function() {
+        const input = document.getElementById('search-input');
+        const recentBox = document.getElementById('recent-searches');
+        const form = input.closest('form');
+        const RECENT_KEY = 'recent_product_searches';
+        function getRecent() {
+            try {
+                return JSON.parse(localStorage.getItem(RECENT_KEY)) || [];
+            } catch { return []; }
+        }
+        function saveRecent(val) {
+            if (!val) return;
+            let arr = getRecent();
+            arr = arr.filter(v => v !== val);
+            arr.unshift(val);
+            if (arr.length > 7) arr = arr.slice(0,7);
+            localStorage.setItem(RECENT_KEY, JSON.stringify(arr));
+        }
+        function showRecent() {
+            const arr = getRecent();
+            if (!arr.length) { recentBox.style.display = 'none'; return; }
+            recentBox.innerHTML = arr.map(q => `
+        <div class='recent-item' style='padding:8px 16px; cursor:pointer; display:flex; align-items:center; justify-content:space-between;'>
+            <span>${q.replace(/</g,'&lt;')}</span>
+            <span class="delete-recent" data-query="${q.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}", style="margin-left:12px; color:#888; font-size:1.1em; cursor:pointer;">&times;</span>
+        </div>`).join('');
+            recentBox.style.display = 'block';
+        }
+        function hideRecent() { recentBox.style.display = 'none'; }
+        input.addEventListener('focus', showRecent);
+        input.addEventListener('input', function() { if (!this.value) showRecent(); else hideRecent(); });
+        document.addEventListener('click', function(e) {
+            if (!recentBox.contains(e.target) && e.target !== input) hideRecent();
+        });
+        recentBox.addEventListener('mousedown', function(e) {
+            if (e.target.classList.contains('recent-item')) {
+                input.value = e.target.textContent;
+                hideRecent();
+                setTimeout(() => form.submit(), 50);
+            }
+            if (e.target.classList.contains('delete-recent')) {
+        e.stopPropagation();
+        const delQuery = e.target.getAttribute('data-query');
+        let arr = getRecent();
+        arr = arr.filter(q => q !== delQuery);
+        localStorage.setItem(RECENT_KEY, JSON.stringify(arr));
+        showRecent();
+    }
+        });
+        form.addEventListener('submit', function() {
+            saveRecent(input.value.trim());
+        });
+    })();
 </script>
