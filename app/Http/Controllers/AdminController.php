@@ -95,7 +95,7 @@ class AdminController extends Controller
         $product->quantity = $request->quantity;
         $product->discount_price = $request->dis_price;
         $product->catagory = $request->catagory;
-        $product->featured = $request->has('featured');
+        $product->featured = $request->has('featured') ? 1 : 0;
         $product->sizes = json_encode($request->input('sizes', []));
         $image = $request->image;
         $imagename = time().'.'.$image->getClientOriginalExtension();
@@ -135,7 +135,8 @@ class AdminController extends Controller
         $product->discount_price = $request->dis_price;
         $product->catagory = $request->catagory;
         $product->quantity = $request->quantity;
-        $product->featured = $request->has('featured');
+        $product->featured = $request->has('featured') ? 1 : 0;
+        $product->new_arrival = $request->has('new_arrival') ? 1 : 0;
         $product->sizes = json_encode($request->input('sizes', []));
         if($request->image) {
             $imagename = time().'.'.$request->image->getClientOriginalExtension();
@@ -176,6 +177,11 @@ class AdminController extends Controller
         $order->delivery_status = "delivered"; 
         $order->payment_status = 'Paid'; 
         $order->save();
+        // Send notification to user
+        $user = User::find($order->user_id);
+        if ($user) {
+            $user->notify(new \App\Notifications\OrderDelivered($order));
+        }
         return redirect()->back();
     }
       

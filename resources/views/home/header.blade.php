@@ -66,6 +66,48 @@
                         <span class="order-text">Orders</span>
                     </a>
 
+                    <!-- Notifications -->
+                    @if(Auth::check())
+                        <div class="nav-icon-link me-3 position-relative">
+                            <a href="#" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-bell"></i>
+                                @if(auth()->user()->unreadNotifications->count() > 0)
+                                    <span class="cart-badge animate-bounce" style="background:#2f80ed;">{{ auth()->user()->unreadNotifications->count() }}</span>
+                                @endif
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="notificationDropdown" style="min-width:300px; max-width:350px; max-height:350px; overflow-y:auto;">
+                                @php
+                                    $allNotifications = auth()->user()->notifications()->orderBy('created_at', 'desc')->get();
+                                @endphp
+                                @forelse($allNotifications as $notification)
+                                    <li class="mb-2">
+                                        <div class="d-flex align-items-center gap-2">
+                                            @if(!empty($notification->data['image']))
+                                                <img src="{{ asset('product/' . $notification->data['image']) }}" alt="Product" style="width:40px;height:40px;object-fit:cover;border-radius:5px;">
+                                            @endif
+                                            <div class="flex-grow-1">
+                                                <span>{{ $notification->data['message'] }}</span>
+                                                @if($notification->read_at)
+                                                    <span class="badge bg-success ms-2">Read</span>
+                                                @else
+                                                    <span class="badge bg-warning ms-2">Unread</span>
+                                                @endif
+                                            </div>
+                                            @if(!$notification->read_at)
+                                            <form method="POST" action="{{ route('notification.read', $notification->id) }}">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-link text-danger p-0">Mark as read</button>
+                                            </form>
+                                            @endif
+                                        </div>
+                                    </li>
+                                @empty
+                                    <li><span class="text-muted">No notifications</span></li>
+                                @endforelse
+                            </ul>
+                        </div>
+                    @endif
+
                     <!-- Mobile Menu Toggle -->
                     <button class="navbar-toggler ms-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                         <i class="fas fa-bars"></i>
@@ -76,12 +118,12 @@
     </nav>
     
 
-    <!-- Deals Banner (Moved to bottom of header) -->
+ 
     <div class="deals-banner overflow-hidden">
         <div class="container">
             <div class="deals-slider">
                 <div class="deals-item">🔥 Hot Deal: 30% OFF on All Summer Collection!</div>
-                <div class="deals-item">🚚 Free Shipping on Orders Over $50</div>
+                <div class="deals-item">🚚 Free Shipping on Orders Over Rs.5000</div>
                 <div class="deals-item">🎁 New Arrivals: Check Out Latest Fashion</div>
             </div>
         </div>

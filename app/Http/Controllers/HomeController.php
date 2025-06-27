@@ -3,25 +3,34 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Catagory;
-use Illuminate\Support\Facades\Log;
 use App\Services\RecommendationService;
+use App\Services\BubbleSort;
+use App\Notifications\OrderPlaced;
 
 class HomeController extends Controller
 {
     public function index(RecommendationService $service)
     {
-        $product = Product::where('featured', true)->paginate(6);
+        $featuredProducts = Product::where('featured', 1)
+            ->whereNotNull('title')
+            ->paginate(6);
+        // Remove debug log for production
+        // Log::debug('Featured products collection', [
+        //     'products' => $featuredProducts->getCollection()->toArray()
+        // ]);
         $user = Auth::user();
         $recommendations = $service->getRecommendations($user, 4); // Show 4 recommendations on homepage
-        return view('home.userpage', compact('product', 'recommendations'));
+        // Fetch products marked as new arrivals
+        $newArrivals = Product::where('new_arrival', true)->orderBy('created_at', 'desc')->take(8)->get();
+        return view('home.userpage', compact('featuredProducts', 'recommendations', 'newArrivals'));
     }
      
     public function redirect()
@@ -46,9 +55,9 @@ class HomeController extends Controller
         }
         else
         {
-            \Log::debug('Fetching products with pagination');
+            Log::debug('Fetching products with pagination');
             $product = Product::paginate(6);
-            \Log::debug('Pagination details', [
+            Log::debug('Pagination details', [
                 'total' => $product->total(),
                 'per_page' => $product->perPage(),
                 'current_page' => $product->currentPage(),
@@ -131,8 +140,25 @@ class HomeController extends Controller
         // Debug: Log SQL query and bindings
         Log::debug('SQL', [$query->toSql(), $query->getBindings()]);
         $products = $query->get();
-        // Debug: Log discount_price of all returned products
-        Log::debug('Filtered products discount_price', $products->pluck('discount_price')->toArray());
+        // Sorting option from filter
+        $sort = $request->input('sort_by');
+        $productsArray = $products->toArray();
+        if ($sort === 'price_asc') {
+            $productsArray = BubbleSort::sort($productsArray);
+        } elseif ($sort === 'price_desc') {
+            $productsArray = array_reverse(BubbleSort::sort($productsArray));
+        } elseif ($sort === 'name_asc') {
+            usort($productsArray, function($a, $b) {
+                return strcmp($a['title'], $b['title']);
+            });
+        } elseif ($sort === 'name_desc') {
+            usort($productsArray, function($a, $b) {
+                return strcmp($b['title'], $a['title']);
+            });
+        }
+        $products = collect($productsArray)->map(function($item) {
+            return (object) $item;
+        });
         $categories = Catagory::all();
         $sizes = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
 
@@ -146,6 +172,7 @@ class HomeController extends Controller
 
 
     public function add_cart(Request $request, $id){
+        Log::info('add_cart called', ['user_id' => Auth::id(), 'product_id' => $id, 'request' => $request->all()]);
 
         if(Auth::id()){
             $user = Auth::user();
@@ -168,12 +195,12 @@ class HomeController extends Controller
             $cart->quantity = $request->quantity;
 
             // Validate and set size
-            if ($product->sizes && $request->has('selected_size')) {
+            if ($product->sizes && (! $request->has('selected_size') || empty($request->selected_size))) {
+                return redirect()->back()->with('error', 'Please select a size.');
+            } elseif ($product->sizes && $request->has('selected_size')) {
                 $cart->size = $request->selected_size;
             } elseif (!$product->sizes) {
                 $cart->size = 'N/A'; // or any default value
-            } else {
-                return redirect()->back()->with('error', 'Please select a size.');
             }
 
             $cart->save();
@@ -191,12 +218,11 @@ class HomeController extends Controller
     }
 
     public function show_cart(){
-
         if(Auth::id()){
             $id=Auth::user()->id;
             $cart=cart::where('user_id','=',$id)->get();
-            return view('home.showcart',compact('cart')); 
-
+            $notifications = Auth::user()->notifications()->take(10)->get();
+            return view('home.showcart',compact('cart', 'notifications'));
         }
         else{
             return redirect('login');
@@ -244,6 +270,16 @@ class HomeController extends Controller
                 'type' => 'purchase',
             ]);
 
+            // Notify user about the order
+            // Log image filename and asset path for debugging
+            Log::info('OrderPlaced Notification Image', [
+                'image_filename' => $data->image,
+                'asset_url' => asset('product/' . $data->image),
+                'file_exists' => file_exists(public_path('product/' . $data->image)),
+            ]);
+
+            $user->notify(new OrderPlaced($data->image, $data->Product_id));
+
             $cart_id=$data->id;
             $cart=cart::find($cart_id); 
             $cart->delete();
@@ -257,7 +293,8 @@ class HomeController extends Controller
         if(Auth::id()){
             $user = Auth::user();
             $orders = Order::where('user_id', $user->id)->get();
-            return view('home.order', compact('orders'));
+            $notifications = $user->notifications()->take(10)->get();
+            return view('home.order', compact('orders', 'notifications'));
         }
         else{
             return redirect('login');
@@ -392,6 +429,15 @@ class HomeController extends Controller
         $user = Auth::user();
         $products = $service->getRecommendations($user, 8);
         return view('home.recommendations', compact('products'));
+    }
+
+    public function markNotificationRead($id)
+    {
+        $notification = Auth::user()->notifications()->where('id', $id)->first();
+        if ($notification) {
+            $notification->markAsRead();
+        }
+        return back();
     }
 }
 

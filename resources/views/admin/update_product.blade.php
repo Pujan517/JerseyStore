@@ -107,6 +107,10 @@
                         <input type="checkbox" name="featured" value="1" {{ $product->featured ? 'checked' : '' }}> Mark as Featured
                     </div>
                     <div class="div_design">
+                        <label>New Arrival:</label>
+                        <input type="checkbox" name="new_arrival" value="1" {{ $product->new_arrival ? 'checked' : '' }}> Mark as New Arrival
+                    </div>
+                    <div class="div_design">
                         <label>Available Sizes:</label>
                         <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                             <label style="font-weight:600; color:#fff; margin-right:18px;">

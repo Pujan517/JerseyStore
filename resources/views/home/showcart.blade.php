@@ -297,7 +297,18 @@
                 </div>
                 <div class="cart-actions">
                     <a href="{{url('cash_order')}}" class="btn btn-danger">Cash On Delivery</a>
-                    <a href="" class="btn btn-danger">Pay Using Esewa</a>
+                     <!-- Inserted eSewa payment form here -->
+                    <form method="POST" action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" style="display:inline-block;">
+                        <input value="{{$totalprice}}" name="tAmt" type="hidden">
+                        <input value="{{$totalprice}}" name="amt" type="hidden">
+                        <input value="0" name="txAmt" type="hidden">  <!-- tax amount -->
+                        <input value="0" name="psc" type="hidden">    <!-- product service charge -->
+                        <input value="0" name="pdc" type="hidden">    <!-- product delivery charge -->
+                        <input value="order_{{ uniqid() }}" name="pid" type="hidden"> <!-- unique order id -->
+                        <input value="{{ url('/esewa_success') }}" type="hidden" name="su">
+                        <input value="{{ url('/esewa_failed') }}" type="hidden" name="fu">
+                        <button type="submit" class="btn btn-danger">Pay Using Esewa</button>
+                    </form>
                 </div>
             </div>
           </div>
@@ -316,6 +327,8 @@
 
       <!-- SweetAlert2 JS -->
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <!-- Bootstrap 5 JS for dropdowns -->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
       
       <script>
         function confirmDelete(url) {

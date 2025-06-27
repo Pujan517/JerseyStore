@@ -384,6 +384,16 @@
                 <option value="out_of_stock" {{ request('availability') == 'out_of_stock' ? 'selected' : '' }}>Out of Stock</option>
             </select>
         </div>
+        <div class="mb-3">
+            <label class="form-label fw-semibold text-primary" style="font-size:0.98rem;">Sort By</label>
+            <select name="sort_by" class="form-select form-select-sm rounded-pill border-primary-subtle" style="background:#f7f8fa;">
+                <option value="">Default</option>
+                <option value="price_asc" {{ request('sort_by') == 'price_asc' ? 'selected' : '' }}>Price: Low to High</option>
+                <option value="price_desc" {{ request('sort_by') == 'price_desc' ? 'selected' : '' }}>Price: High to Low</option>
+                <option value="name_asc" {{ request('sort_by') == 'name_asc' ? 'selected' : '' }}>Name: A to Z</option>
+                <option value="name_desc" {{ request('sort_by') == 'name_desc' ? 'selected' : '' }}>Name: Z to A</option>
+            </select>
+        </div>
         <div class="mt-4">
             <button type="submit" class="btn btn-primary btn-sm w-100 filter-apply-btn rounded-pill shadow-sm" style="font-weight:600; font-size:1.05rem; letter-spacing:0.5px;">Apply Filters <i class="fa fa-filter ms-2"></i></button>
         </div>

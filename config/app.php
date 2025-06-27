@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |----------------------------------------------------------------------
     | Application Name
@@ -65,10 +64,8 @@ return [
     |----------------------------------------------------------------------
     */
     'maintenance' => [
-    'driver' => 'file',
-],
-
-
+        'driver' => 'file',
+    ],
 
     /*
     |----------------------------------------------------------------------
@@ -76,7 +73,6 @@ return [
     |----------------------------------------------------------------------
     */
     'providers' => [
-
         /*
          * Laravel Framework Service Providers...
          */
@@ -95,6 +91,8 @@ return [
         Illuminate\Queue\QueueServiceProvider::class,
         Illuminate\Encryption\EncryptionServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
+        Illuminate\Notifications\NotificationServiceProvider::class,
+        Illuminate\Mail\MailServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -108,9 +106,6 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        
-        
-
     ],
 
     /*
@@ -119,18 +114,16 @@ return [
     |----------------------------------------------------------------------
     */
     'aliases' => [
-    'Session' => Illuminate\Support\Facades\Session::class,    
-    'Hash' => Illuminate\Support\Facades\Hash::class,
-    'App' => Illuminate\Support\Facades\App::class,
-    'Artisan' => Illuminate\Support\Facades\Artisan::class,
-    'Auth' => Illuminate\Support\Facades\Auth::class,
-    'Cache' => Illuminate\Support\Facades\Cache::class,
-    'Route' => Illuminate\Support\Facades\Route::class,
-    'PDF' => Barryvdh\DomPDF\Facade::class,
-    'DB' => Illuminate\Support\Facades\DB::class,
-    'Crypt' => Illuminate\Support\Facades\Crypt::class,
-    'Validator' => Illuminate\Support\Facades\Validator::class,
-],
-
-
+        'Session' => Illuminate\Support\Facades\Session::class,
+        'Hash' => Illuminate\Support\Facades\Hash::class,
+        'App' => Illuminate\Support\Facades\App::class,
+        'Artisan' => Illuminate\Support\Facades\Artisan::class,
+        'Auth' => Illuminate\Support\Facades\Auth::class,
+        'Cache' => Illuminate\Support\Facades\Cache::class,
+        'Route' => Illuminate\Support\Facades\Route::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
+        'DB' => Illuminate\Support\Facades\DB::class,
+        'Crypt' => Illuminate\Support\Facades\Crypt::class,
+        'Validator' => Illuminate\Support\Facades\Validator::class,
+    ],
 ];

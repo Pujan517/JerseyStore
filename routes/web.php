@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\EsewaController;
 
 // Authentication Routes
 Route::middleware(['throttle:login'])->group(function () {
@@ -81,4 +82,8 @@ Route::get('/autocomplete', [\App\Http\Controllers\AutocompleteController::class
 // Recommendations Route
 Route::get('/recommendations', [HomeController::class, 'recommendations'])->name('recommendations');
 
+Route::post('/pay-with-esewa', [EsewaController::class, 'redirectToEsewa'])->name('esewa.pay');
+Route::post('/esewa/success', [EsewaController::class, 'esewaSuccess'])->name('esewa.success');
+Route::post('/esewa/failure', [EsewaController::class, 'esewaFailure'])->name('esewa.failure');
+Route::post('/notification/read/{id}', [HomeController::class, 'markNotificationRead'])->name('notification.read');
 
