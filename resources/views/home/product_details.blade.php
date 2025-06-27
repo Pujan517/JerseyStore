@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-        <meta charset="utf-8" />
+    <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="keywords" content="" />
@@ -14,63 +14,7 @@
     <link href="{{ asset('home/css/style.css') }}" rel="stylesheet" />
     <link href="{{ asset('home/css/responsive.css') }}" rel="stylesheet" />
     <style>
-        @font-face {
-            font-family: 'FontAwesome';
-            src: url('{{ asset('home/fonts/fontawesome-webfont.woff2?v=4.7.0') }}') format('woff2'),
-                 url('{{ asset('home/fonts/fontawesome-webfont.woff?v=4.7.0') }}') format('woff'),
-                 url('{{ asset('home/fonts/fontawesome-webfont.ttf?v=4.7.0') }}') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-        }
-        /* Removed body background override to keep site default */
-         :root {
-            --primary-color: #2f80ed;
-            --secondary-color: #56ccf2;
-            --accent-color: #3498db;
-            --text-color: #2c3e50;
-            --light-gray: #f8f9fa;
-            --dark-gray: #343a40;
-         }
-          .navbar {
-            width: 70%;
-            margin: 30px auto 0 auto;
-            border-radius: 50px;
-            background: #fff;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.04);
-            padding: 18px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .deals-banner {
-        width: 70%;
-        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-        padding: 10px 0;
-        margin-top: 20px;
-        border-radius: 25px;
-        margin-left: 20px;
-        margin-right: 20px;
-    }
-     .header_section {
-      padding: -100px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: start;
-      margin: 0;
-      padding: 0;
-   }
-   .nav-item.active .nav-link {
-       background: #e3f0ff !important;
-       color: #1e40af !important;
-       font-weight: bold !important;
-       font-weight: 500;
-       color: var(--text-color) !important;
-       margin: 0 10px;
-       position: relative;
-   }
+        /* Only product-specific styles below. Header-related and duplicate styles removed. */
         .glass-card {
             background: rgba(255,255,255,0.85);
             border-radius: 24px;
@@ -263,7 +207,6 @@
                 </div>
             </div>
         </div>
-       
     </div>
     <script src="{{ asset('home/js/jquery-3.4.1.min.js') }}"></script>
     <script src="{{ asset('home/js/popper.min.js') }}"></script>

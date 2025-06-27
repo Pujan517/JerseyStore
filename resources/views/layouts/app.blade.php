@@ -16,6 +16,7 @@
 
         <!-- Styles -->
         @livewireStyles
+        <link href="{{ asset('home/css/style.css') }}" rel="stylesheet" />
         <style>
             body {
                 background-color: #f3f4f6;  /* A light grey color */
@@ -29,6 +30,8 @@
     </head>
     <body class="font-sans antialiased">
         <x-banner />
+
+        @include('home.header')
 
         <div class="">
             @livewire('navigation-menu')
@@ -44,7 +47,7 @@
 
             <!-- Page Content -->
             <main>
-                {{ $slot }}
+                @yield('content')
             </main>
         </div>
 

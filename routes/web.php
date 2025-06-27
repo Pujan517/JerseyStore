@@ -75,6 +75,7 @@ Route::get('/contact', function () {
     return view('home.contact');
 })->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.send');
 
 // Autocomplete predictive search route
 Route::get('/autocomplete', [\App\Http\Controllers\AutocompleteController::class, 'products'])->name('autocomplete');

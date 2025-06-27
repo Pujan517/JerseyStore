@@ -16,8 +16,10 @@
 
         <!-- Styles -->
         @livewireStyles
+        <link href="{{ asset('home/css/style.css') }}" rel="stylesheet" />
     </head>
     <body>
+        @include('home.header')
         <div class="font-sans text-gray-900 antialiased">
             {{ $slot }}
         </div>
