@@ -303,21 +303,46 @@
                 <div class="cart-actions">
                     <a href="{{url('cash_order')}}" class="btn btn-danger">Cash On Delivery</a>
                      <!-- Inserted eSewa payment form here -->
-                    <form method="POST" action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" style="display:inline-block;">
-                        <input value="{{$totalprice}}" name="tAmt" type="hidden">
-                        <input value="{{$totalprice}}" name="amt" type="hidden">
-                        <input value="0" name="txAmt" type="hidden">  <!-- tax amount -->
-                        <input value="0" name="psc" type="hidden">    <!-- product service charge -->
-                        <input value="0" name="pdc" type="hidden">    <!-- product delivery charge -->
-                        <input value="order_{{ uniqid() }}" name="pid" type="hidden"> <!-- unique order id -->
-                        <input value="{{ url('/esewa_success') }}" type="hidden" name="su">
-                        <input value="{{ url('/esewa_failed') }}" type="hidden" name="fu">
-                        <button type="submit" class="btn btn-danger">Pay Using Esewa</button>
+                    <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST">
+                    <input type="hidden" id="amount" name="amount" value="100" required>
+                    <input type="hidden" id="tax_amount" name="tax_amount" value ="0" required>
+                    <input type="hidden" id="total_amount" name="total_amount" value="110" required>
+                    <input type="hidden" id="transaction_uuid" name="transaction_uuid" value="241028" required>
+                    <input type="hidden" id="product_code" name="product_code" value ="EPAYTEST" required>
+                    <input type="hidden" id="product_service_charge" name="product_service_charge" value="0" required>
+                    <input type="hidden" id="product_delivery_charge" name="product_delivery_charge" value="0" required>
+                    <input type="hidden" id="success_url" name="success_url" value="https://developer.esewa.com.np/success" required>
+                    <input type="hidden" id="failure_url" name="failure_url" value="https://developer.esewa.com.np/failure" required>
+                    <input type="hidden" id="signed_field_names" name="signed_field_names" value="total_amount,transaction_uuid,product_code" required>
+                    <input type="hidden" id="signature" name="signature" value="i94zsd3oXF6ZsSr/kGqT4sSzYQzjj1W/waxjWyRwaME=" required>
+                    <input value="Pay with eSewa" class="btn btn-success" type="submit">
                     </form>
+                    <!-- Khalti Payment Button -->
+                    <button id="khalti-pay-btn" class="btn btn-success" style="margin-left:10px;">Pay with Khalti</button>
                 </div>
             </div>
           </div>
       </div>
+
+      <!-- Esewa  -->
+    @php
+        $amount=$totalprice;
+        $transaction_uuid = time();
+        $product_code = 'EPAYTEST';
+        $total_amount = $amount;
+        $secret = '8gBm/:&EnhH.1/q';
+        $message = "total_amount=$total_amount,transaction_uuid=$transaction_uuid,product_code=$product_code";
+        $signature = hash_hmac('sha256', $message, $secret, true);
+        $signature = base64_encode($signature);
+    @endphp
+
+    <script>
+        document.getElementById('amount').value = '{{ $amount }}';
+        document.getElementById('transaction_uuid').value = '{{ $transaction_uuid }}';
+        document.getElementById('product_code').value = '{{ $product_code }}';
+        document.getElementById('total_amount').value = '{{ $total_amount }}';
+        document.getElementById('signature').value = '{{ $signature }}';
+    </script>
 
       <!-- footer end -->
       
@@ -334,6 +359,50 @@
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <!-- Bootstrap 5 JS for dropdowns -->
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <!-- Khalti JS SDK -->
+      <script src="https://khalti.com/static/khalti-checkout.js"></script>
+      <script>
+        var khaltiConfig = {
+            "publicKey": "test_public_key_dc74b7b3a9e34b6c8e6e7b7b7b7b7b7b", // Replace with your Khalti public key
+            "productIdentity": "cart_{{ auth()->user()->id ?? 'guest' }}",
+            "productName": "Jersey Store Cart Payment",
+            "productUrl": window.location.href,
+            "eventHandler": {
+                onSuccess (payload) {
+                    // Send payload to server for verification
+                    fetch('/khalti/verify', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            token: payload.token,
+                            amount: {{ $totalprice }} * 100 // Khalti expects paisa
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.success){
+                            Swal.fire('Payment Successful', 'Your payment was successful!', 'success').then(()=>window.location.reload());
+                        } else {
+                            Swal.fire('Payment Failed', 'Verification failed.', 'error');
+                        }
+                    });
+                },
+                onError (error) {
+                    Swal.fire('Payment Error', error.message || 'Something went wrong!', 'error');
+                },
+                onClose () {
+                    // Do nothing
+                }
+            }
+        };
+        var checkout = new KhaltiCheckout(khaltiConfig);
+        document.getElementById('khalti-pay-btn').onclick = function () {
+            checkout.show({amount: {{ $totalprice }} * 100});
+        }
+      </script>
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>

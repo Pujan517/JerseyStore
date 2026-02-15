@@ -30,12 +30,16 @@
                            <h5>{{$product->title}}</h5>
                            <div class="price-box">
                               @if($product->discount_price!=null)
-                              <div class="price-wrapper">
-                                 <h6 class="original-price">Rs. {{number_format($product->price, 2)}}</h6>
-                                 <h6 class="discounted-price">Rs. {{number_format($product->discount_price, 2)}}</h6>
-                                 <span class="discount-tag" style="background-color:red">
-                                   -{{ round((($product->price - $product->discount_price) / $product->price) * 100) }}% OFF
-                                 </span>
+                              <div class="price-wrapper d-flex flex-column align-items-center">
+                                 <div>
+                                   <span class="original-price">Rs. {{number_format($product->price, 2)}}</span>
+                                   <span class="discount-tag" style="background-color:red">
+                                     -{{ round((($product->price - $product->discount_price) / $product->price) * 100) }}% OFF
+                                   </span>
+                                 </div>
+                                 <div class="featured-discount-badge mt-2" style="background: linear-gradient(90deg, #2f80ed 60%, #56ccf2 100%); color: #fff; font-weight:600; letter-spacing:0.5px; font-size:1.08rem; border-radius:8px; padding:4px 18px; display:inline-block;">
+                                   Rs. {{number_format($product->discount_price, 2)}}
+                                 </div>
                               </div>
                               @else
                               <h6 class="regular-price">Rs. {{number_format($product->price, 2)}}</h6>

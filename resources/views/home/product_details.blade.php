@@ -14,6 +14,7 @@
     <link href="{{ asset('home/css/style.css') }}" rel="stylesheet" />
     <link href="{{ asset('home/css/responsive.css') }}" rel="stylesheet" />
     <style>
+    /* ...existing code... */
         /* Only product-specific styles below. Header-related and duplicate styles removed. */
         .glass-card {
             background: rgba(255,255,255,0.85);
@@ -208,6 +209,9 @@
             </div>
         </div>
     </div>
+     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
     <script src="{{ asset('home/js/jquery-3.4.1.min.js') }}"></script>
     <script src="{{ asset('home/js/popper.min.js') }}"></script>
     <script src="{{ asset('home/js/bootstrap.js') }}"></script>

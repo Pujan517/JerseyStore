@@ -97,15 +97,19 @@
                         <p class="mb-4">We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
                         <div class="mb-3 d-flex align-items-start">
                            <span class="me-3 fs-3 text-primary"><i class="fas fa-map-marker-alt"></i></span>
-                           <div><h6 class="mb-1">Address</h6><p class="mb-0">Kathmandu, Nepal</p></div>
+                           <div><h6 class="mb-1">Address</h6><p class="mb-0">Gaindakot, Nepal</p></div>
                         </div>
                         <div class="mb-3 d-flex align-items-start">
                            <span class="me-3 fs-3 text-primary"><i class="fas fa-phone"></i></span>
-                           <div><h6 class="mb-1">Phone</h6><p class="mb-0">+977 9819287752</p></div>
+                           <div><h6 class="mb-1">Phone</h6><p class="mb-0">+977 9819287752 <br>
+                              +977 9860898568
+                           </p></div>
                         </div>
                         <div class="mb-3 d-flex align-items-start">
                            <span class="me-3 fs-3 text-primary"><i class="fas fa-envelope"></i></span>
-                           <div><h6 class="mb-1">Email</h6><p class="mb-0">Pujan2273@gmail.com</p></div>
+                           <div><h6 class="mb-1">Email</h6><p class="mb-0">Pujan2273@gmail.com
+                              Bigh_bca2078@lict.edu.np
+                           </p></div>
                         </div>
                         <div class="mb-3 d-flex align-items-start">
                            <span class="me-3 fs-3 text-primary"><i class="fas fa-clock"></i></span>

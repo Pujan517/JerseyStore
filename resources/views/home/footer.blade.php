@@ -9,7 +9,8 @@
                       <div class="information_f">
                         <p><strong>ADDRESS:</strong> Gaindakot,Nawalpur, Nepal</p>
                         <p><strong>TELEPHONE:</strong> +977 9819287752</p>
-                        <p><strong>EMAIL:</strong> pujan2273@gmail.com</p>
+                        <p><strong>EMAIL:</strong> pujan2273@gmail.com
+                     Bigh_bca2078@lict.edu.np</p>
                       </div>
                    </div>
                </div>
@@ -21,12 +22,12 @@
                      <div class="widget_menu">
                         <h3>Menu</h3>
                         <ul>
-                           <li><a href="#">Home</a></li>
-                           <li><a href="#">About</a></li>
-                           <li><a href="#">Services</a></li>
-                           <li><a href="#">Testimonial</a></li>
-                           <li><a href="#">Blog</a></li>
-                           <li><a href="#">Contact</a></li>
+                           <li><a href="/">Home</a></li>
+                           <li><a href="/all_products">Product</a></li>
+                           <li><a href="/categories">Categories</a></li>
+                           <li><a href="/contact">Contact</a></li>
+                           <li><a href="/cart">Cart</a></li>
+                           <li><a href="/orders">Order</a></li>
                         </ul>
                      </div>
                   </div>
@@ -34,12 +35,11 @@
                      <div class="widget_menu">
                         <h3>Account</h3>
                         <ul>
-                           <li><a href="#">Account</a></li>
-                           <li><a href="#">Checkout</a></li>
-                           <li><a href="#">Login</a></li>
-                           <li><a href="#">Register</a></li>
-                           <li><a href="#">Shopping</a></li>
-                           <li><a href="#">Widget</a></li>
+                           <li><a href="/profile">Account</a></li>
+                           <li><a href="/login">Login</a></li>
+                           <li><a href="/register">Register</a></li>
+                           <li><a href="/all_products">Shopping</a></li>
+                          
                         </ul>
                      </div>
                   </div>
@@ -47,9 +47,9 @@
                   </div>     
                   <div class="col-md-5">
                      <div class="widget_menu">
-                        <h3>Newsletter</h3>
+                        <h3>Bhakundo</h3>
                         <div class="information_f">
-                          <p>Subscribe by our newsletter and get update protidin.</p>
+                          <p></p>
                         </div>
                         <div class="form_sub">
                            <form>

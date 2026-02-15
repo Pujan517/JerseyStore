@@ -1,11 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Cart;
@@ -239,14 +237,15 @@ class HomeController extends Controller
 
     public function cash_order(){
 
-        $user=Auth::user();
+    Log::info('cash_order method called');
+    $user=Auth::user();
         $userid=$user->id;
 
-        $data=cart::where('user_id','=',$userid)->get();
+        $data=Cart::where('user_id','=',$userid)->get();
 
         foreach($data as $data)
         {
-            $order=new order;
+            $order=new Order;
 
             $order->name=$data->name;
             $order->email=$data->email;
@@ -262,6 +261,24 @@ class HomeController extends Controller
             $order->payment_status='cash on delivery';
             $order->delivery_status='processing';
             $order->save();
+
+                // Decrease product stock and log
+                $product = \App\Models\Product::where('id', $data->Product_id)->first();
+                if ($product) {
+                    $oldQty = $product->quantity;
+                    $product->quantity = max(0, $product->quantity - $data->quantity);
+                    $product->save();
+                    Log::info('Product stock updated', [
+                        'Product_id' => $product->id,
+                        'Old_quantity' => $oldQty,
+                        'Order_quantity' => $data->quantity,
+                        'New_quantity' => $product->quantity
+                    ]);
+                } else {
+                    Log::warning('Product not found for stock update', [
+                        'Product_id' => $data->Product_id
+                    ]);
+                }
 
             // Record purchase activity
             \App\Models\UserActivity::create([
@@ -281,7 +298,7 @@ class HomeController extends Controller
             $user->notify(new OrderPlaced($data->image, $data->Product_id));
 
             $cart_id=$data->id;
-            $cart=cart::find($cart_id); 
+            $cart=Cart::find($cart_id); 
             $cart->delete();
         }
 
@@ -315,11 +332,24 @@ class HomeController extends Controller
             }
             return redirect()->back()->with('message', 'Unable to cancel the order');
         }
-        return redirect('login');
+                $order->save();
+
+                // Debug log for product stock update
+                \Log::info('Order stock update', [
+                    'Product_id' => $data->Product_id,
+                    'Order_quantity' => $data->quantity
+                ]);
+
     }
 
     public function show_categories()
     {
+                // Decrease product stock
+                $product = \App\Models\Product::find($data->Product_id);
+                if ($product) {
+                    $product->quantity = max(0, $product->quantity - $data->quantity);
+                    $product->save();
+                }
         $categories = Catagory::all();
         return view('home.categories', compact('categories'));
     }

@@ -162,7 +162,24 @@ class AdminController extends Controller
         $total_revenue = Order::sum('price'); 
         $total_delivered = Order::where('delivery_status', 'delivered')->count();
         $total_processing = Order::where('delivery_status', 'processing')->count();
-        return view('admin.home', compact('total_product', 'total_order', 'total_user','total_revenue','total_delivered','total_processing'));
+
+        // Sales by category for pie chart
+        $categories = \App\Models\Catagory::all();
+        $categoryLabels = [];
+        $categorySales = [];
+        foreach ($categories as $cat) {
+            $categoryLabels[] = $cat->catagory_name;
+            $salesCount = Order::whereHas('product', function($q) use ($cat) {
+                $q->where('catagory', $cat->catagory_name);
+            })->count();
+            $categorySales[] = $salesCount;
+        }
+
+        return view('admin.home', compact(
+            'total_product', 'total_order', 'total_user',
+            'total_revenue', 'total_delivered', 'total_processing',
+            'categoryLabels', 'categorySales'
+        ));
     }
 
     public function order()

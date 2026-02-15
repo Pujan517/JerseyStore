@@ -1,4 +1,4 @@
-<section class="slider_section ">
+<!-- <section class="slider_section ">
             <div class="slider_bg_box">
                <img src="images/slider-bg.jpg" alt="">
             </div>
@@ -92,4 +92,4 @@
     border-radius: 30px !important;
     /* ...existing styles... */
   }
-</style>
+</style> -->

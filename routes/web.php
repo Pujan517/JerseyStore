@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EsewaController;
+use App\Http\Controllers\OrderController;
 
 // Authentication Routes
 Route::middleware(['throttle:login'])->group(function () {
@@ -25,7 +26,7 @@ Route::get('/categories', [HomeController::class, 'show_categories'])->name('cat
 Route::get('/admin/search_product', [AdminController::class, 'search_product'])->name('admin.products.search');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.home');
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/view_catagory', [AdminController::class, 'view_catagory'])->name('admin.categories.index');
     Route::post('/add_catagory', [AdminController::class, 'add_catagory'])->name('admin.categories.store');
     Route::get('/delete_catagory/{id}', [AdminController::class, 'delete_catagory'])->name('admin.categories.destroy');
@@ -43,6 +44,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/search', [AdminController::class, 'searchdata']);
     Route::get('/edit_catagory/{id}', [AdminController::class, 'edit_catagory']);
     Route::post('/update_catagory/{id}', [AdminController::class, 'update_catagory']);
+
+    // Profile page route
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
 });
 
 // Home Routes
@@ -58,6 +62,9 @@ Route::get('/show_cart', [HomeController::class, 'show_cart']);
 Route::get('/remove_cart/{id}', [HomeController::class, 'remove_cart']);
 Route::get('/cash_order', [HomeController::class, 'cash_order']);
 
+// Khalti Payment Verification Route
+use App\Http\Controllers\KhaltiController;
+Route::post('/khalti/verify', [KhaltiController::class, 'verify']);
 // PDF Routes
 Route::get('/download-pdf', [PdfController::class, 'downloadPdf']);
 Route::get('/test-view', function () {
@@ -83,8 +90,8 @@ Route::get('/autocomplete', [\App\Http\Controllers\AutocompleteController::class
 // Recommendations Route
 Route::get('/recommendations', [HomeController::class, 'recommendations'])->name('recommendations');
 
-Route::post('/pay-with-esewa', [EsewaController::class, 'redirectToEsewa'])->name('esewa.pay');
-Route::post('/esewa/success', [EsewaController::class, 'esewaSuccess'])->name('esewa.success');
-Route::post('/esewa/failure', [EsewaController::class, 'esewaFailure'])->name('esewa.failure');
+Route::post('/pay-with-esewa', [EsewaController::class, 'pay'])->name('esewa.pay');
+Route::match(['GET', 'POST'], '/esewa/success', [EsewaController::class, 'esewaSuccess'])->name('esewa.success');
+Route::match(['GET', 'POST'], '/esewa/failure', [EsewaController::class, 'esewaFailure'])->name('esewa.failure');
 Route::post('/notification/read/{id}', [HomeController::class, 'markNotificationRead'])->name('notification.read');
 

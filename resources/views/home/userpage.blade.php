@@ -38,7 +38,7 @@
         .hero_area {
             position: relative;
             background-color: var(--light-gray);
-            min-height: 80vh;
+            min-height: 40vh;
             display: flex;
             align-items: center;
         }
@@ -381,28 +381,30 @@
            }
          }
 
-         .recommendations-card-custom {
+      .recommendations-card-custom {
         aspect-ratio: 1 / 1;
         max-width: 320px;
         width: 100%;
         background: #f7fafc;
         border-radius: 12px;
         border: 2px solid #e3e6ea;
-        box-shadow: 0 4px 18px rgba(44,62,80,0.10), 0 1.5px 6px rgba(44,62,80,0.06);
+        box-shadow: 0 2px 12px rgba(44, 62, 80, 0.08);
         overflow: hidden;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
         padding: 18px 10px 10px 10px;
-        transition: box-shadow 0.25s, border-color 0.25s, transform 0.3s;
+        transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s, background 0.2s;
         min-height: 315px;
+        will-change: transform, box-shadow, border-color, background;
       }
       .recommendations-card-custom:hover {
-        box-shadow: 0 12px 32px rgba(44,62,80,0.18), 0 4px 16px rgba(44,62,80,0.13);
-        border-color: #bfc8d4;
-        background: rgba(255,255,255,0.97);
-        transform: scale(1.045);
+        box-shadow: 0 8px 24px rgba(44, 62, 80, 0.18);
+        border-color: #56ccf2;
+        background: #fff;
+        transform: translateY(-6px) scale(1.03);
+        cursor: pointer;
       }
       .recommendations-img-box {
          width: 100%;
@@ -463,6 +465,7 @@
       .recommendations-card-custom:hover .recommendations-option-container {
         opacity: 1;
         pointer-events: auto;
+        
       }
 
       .new-arrivals-section .box:hover {
@@ -523,19 +526,31 @@
         align-items: center;
       }
       .option1, .recommendations-option-btn {
-        background: #2f80ed;
+        background: linear-gradient(90deg, #2f80ed 60%, #56ccf2 100%);
         color: #fff;
-        border-radius: 4px;
-        padding: 6px 18px;
+        border-radius: 999px;
+        padding: 8px 28px 8px 20px;
         margin-bottom: 8px;
-        font-size: 0.97rem;
-        transition: background 0.2s;
+        font-size: 1.05rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(44,62,80,0.10);
+        border: none;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
         text-decoration: none;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+        outline: none;
+        cursor: pointer;
       }
       .option1:hover, .recommendations-option-btn:hover {
-        background: #1e5bb8;
+        background: linear-gradient(90deg, #1e5bb8 60%, #3498db 100%);
         color: #fff;
+        transform: translateY(-2px) scale(1.04);
+        box-shadow: 0 4px 16px rgba(44,62,80,0.13);
       }
 
       .new-arrivals-section .new-arrivals-rectangle {
@@ -672,7 +687,6 @@
 
       <div class="hero_area">
          @include('home.header')
-         @include('home.slider')
       </div>
       
 
@@ -704,7 +718,7 @@
                             @endif
                             <div class="product-desc mb-2" style="font-size:0.97rem; color:#555; max-width:350px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ $product->description ?? '' }}</div>
                             <div class="option_container" style="position:static; opacity:1; pointer-events:auto; margin-top:56px;">
-                              <a href="{{ url('product/'.$product->id) }}" class="option1">
+                              <a href="{{ url('product_details/'.$product->id) }}" class="option1">
                                 View Product
                               </a>
                             </div>
@@ -755,8 +769,17 @@
                           <img src="{{ asset('product/'.$product->image) }}" alt="{{ $product->title }}" class="img-fluid recommendations-img" />
                         </div>
                         <div class="recommendations-title text-center w-100">{{ $product->title }}</div>
+                        <br>
+                        @if($product->discount_price)
+                          <div class="badge mb-2 px-3 py-2 fs-6 shadow-sm" style="background: linear-gradient(90deg, #2f80ed 60%, #56ccf2 100%); color: #fff; font-weight:600; letter-spacing:0.5px; font-size:1.08rem;">Rs.{{ $product->discount_price }}</div>
+                        @endif
                         <div class="recommendations-option-container">
-                          <a href="{{ url('product/'.$product->id) }}" class="recommendations-option-btn">View Details</a>
+                          <a href="{{ url('product/'.$product->id) }}" class="recommendations-option-btn">
+                            View Details
+                            <span style="display:inline-block; margin-left:4px; font-size:1.1em; vertical-align:middle;">
+                              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;"><path d="M7.5 5L12.5 10L7.5 15" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                          </a>
                         </div>
                      </div>
                   </div>

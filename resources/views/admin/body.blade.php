@@ -122,6 +122,73 @@
             </div>
         </div>
         <!-- You can add more dashboard sections here if needed -->
+            <!-- Bar Graph Visualization -->
+            <div class="dashboard-section" style="margin-bottom:32px; display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+                <div>
+                    <h2 style="color:#fff; font-size:1.3rem; font-weight:700; margin-bottom:18px; text-align:center;">Overview Chart</h2>
+                    <div style="background:#222; border-radius:16px; padding:32px 40px; box-shadow:0 4px 16px rgba(0,0,0,0.22); width:800px; height:600px; display:flex; justify-content:center; align-items:center;">
+                        <canvas id="dashboardBarChart" height="400" width="700" style="display:block;"></canvas>
+                    </div>
+                </div>
+            </div>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var ctx = document.getElementById('dashboardBarChart').getContext('2d');
+                var dashboardBarChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Total Orders', 'Total Products', 'Order Delivered', 'Order Processing'],
+                        datasets: [{
+                            label: 'Statistics',
+                            data: [
+                                parseInt(@json($total_order)),
+                                parseInt(@json($total_product)),
+                                parseInt(@json($total_delivered)),
+                                parseInt(@json($total_processing))
+                            ],
+                            backgroundColor: [
+                                '#1976d2',
+                                '#ffb300',
+                                '#7e57c2',
+                                '#e53935'
+                            ],
+                            borderColor: [
+                                '#90caf9',
+                                '#ffe082',
+                                '#b39ddb',
+                                '#ef9a9a'
+                            ],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            title: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: '#333',
+                                titleColor: '#fff',
+                                bodyColor: '#fff'
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: { color: '#fff', font: { size: 11 } },
+                                grid: { color: '#444' }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: '#fff', font: { size: 11 } },
+                                grid: { color: '#444' }
+                            }
+                        }
+                    }
+                });
+            });
+            </script>
     </div>
     </div>
   </div>

@@ -2,7 +2,7 @@
     <div class="sidebar-wrapper">
         <ul class="nav">
             @auth            <li class="nav-item {{ request()->is('/dashboard') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('/dashboard') }}">
+                <a class="nav-link" href="{{ route('admin.dashboard') }}">
                     <i class="fas fa-home"></i>
                     <p>Dashboard</p>
                 </a>
